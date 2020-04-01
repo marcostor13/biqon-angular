@@ -85,8 +85,6 @@ export class HomeComponent implements OnInit {
       this.getUnique(r, 'TELEFONO')
       this.getUnique(r, 'REGION')
       this.data = r
-
-
     },
       error => {
         this.changing = false;
