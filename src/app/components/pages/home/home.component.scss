@@ -1,0 +1,31 @@
+#changing{
+    min-width: 100vw;
+    min-height: 100vh;
+    position: fixed;
+    top:0;
+    left:0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba($color: #FFFFFF, $alpha: .7);
+}
+
+nz-select {
+    margin-right: 8px;
+    width: 100%;
+}
+
+button {
+    color: white;
+    min-width: 100%;
+    border: none; 
+    min-height: 30px;
+    border-radius: 4px;
+
+
+}
+
+button:hover{
+    opacity: .8;
+}
+

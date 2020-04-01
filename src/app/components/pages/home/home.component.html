@@ -1,0 +1,150 @@
+<app-header></app-header>
+
+<div id="dashboard">
+
+    <h5 class="font-500 text-white mt-4  bg-color2 p-3">BUSCADOR DE CLIENTES</h5>
+
+    <div class="row m-0 p-3 mt-4 p-4 flex-wrap">
+
+        <div class="col-12 col-lg-4 col-xl-3 mt-2">
+            <nz-input-group [nzSuffix]="suffixIconSearch">
+                <input (keyup)="onKeyUp('rut')" type="text" nz-input placeholder="Busqueda por rut" [(ngModel)]="rut" />
+            </nz-input-group>
+            <ng-template #suffixIconSearch>
+                <i nz-icon nzType="search"></i>
+            </ng-template>
+        </div>
+
+        <div class="col-12 col-lg-4 col-xl-3 mt-2">
+            <nz-input-group nzCompact>
+                <nz-select [(ngModel)]="Between" style="width:30.3%; text-align: center;">
+                    <nz-option [nzLabel]="'Entre'" [nzValue]="'Between'"></nz-option>
+                    <nz-option [nzLabel]="'Excepto'" [nzValue]="'Except'"></nz-option>
+                </nz-select>
+                <input (keyup)="onKeyUp('from')" type="text" [(ngModel)]="from" nz-input placeholder="Desde" style="width:30%; text-align: center;" />
+                <input type="text" disabled nz-input placeholder="~" style="width: 10%; border-left: 0px; pointer-events: none; background-color: rgb(255, 255, 255);" />
+                <input (keyup)="onKeyUp('to')" type="text" [(ngModel)]="to" nz-input placeholder="Hasta" style="width: 30%; text-align: center; border-left: 0px;" />
+            </nz-input-group>
+        </div>
+
+        <div class="col-12 col-lg-4 col-xl-3 mt-2">
+            <textarea (keyup)="onKeyUp('rutList')" nz-input placeholder="Pegue aquí su lista de rut"  [(ngModel)]="rutList" nzAutosize></textarea>
+        </div>
+
+        <div class="col-12 col-lg-4 col-xl-3 mt-2">
+            <input nz-input placeholder="Nombre" [(ngModel)]="name" />
+        </div>
+
+        <div class="col-12 col-lg-4 col-xl-3 mt-2">
+            <input nz-input placeholder="Teléfono" [(ngModel)]="phone" />
+        </div>
+
+        <div class="col-12 col-lg-4 col-xl-3 mt-2">
+            <input nz-input placeholder="Comuna" [(ngModel)]="comuna" />
+        </div>
+        
+        <div class="col-12 col-lg-4 col-xl-3 mt-2">
+            <input nz-input placeholder="Region" [(ngModel)]="region" />            
+        </div>
+
+        <div class="col-12 col-lg-4 col-xl-3 mt-2">
+            <button (click)="getData()" class="text-white bg-color2 cursor">Buscar</button>
+        </div>
+    </div>
+
+
+    <div *ngIf="result" class="p-5 mt-0 mt-4 row">
+        
+        <div class="col-12 col-lg-4 col-xl-3 mt-2">
+            <div class="card shadow border-0 bg-color1 p-4">
+                <h3 class="text-white">Total RUTs</h3>
+                <h4 class="text-white">{{totalRut}}</h4>
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-4 col-xl-3 mt-2">
+            <div class="card shadow border-0 bg-color2 p-4">
+                <h3 class="text-white">RUTs únicos</h3>
+                <h4 class="text-white">{{amountDataUnique.RUT}}</h4>
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-4 col-xl-3 mt-2">
+            <div class="card shadow border-0 bg-color3 p-4">
+                <h3 class="text-white">Teléfonos</h3>
+                <h4 class="text-white">{{amountDataUnique.TELEFONO}}</h4>
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-4 col-xl-3 mt-2">
+            <div class="card shadow border-0 bg-color4 p-4">
+                <h3 class="text-white">Regiones</h3>
+                <h4 class="text-white">{{amountDataUnique.REGION}}</h4>
+            </div>
+        </div>
+
+    </div>
+
+
+
+    <div *ngIf="result" class="p-5 mt-0 mt-4 row m-0">
+
+        <div class=" col-12 p-0 m-0 justify-content-end">
+
+            <div class=" col-12 col-lg-3 p-0 m-0">
+                <button class="text-white bg-color2 cursor mt-4 mb-4" (click)="exportAsXLSX()">
+                    <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="24" height="24" viewBox="0 0 172 172"
+                        style=" fill:#FFFFFF;">
+                        <g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter"
+                            stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none"
+                            font-size="none" text-anchor="none" style="mix-blend-mode: normal">
+                            <path d="M0,172v-172h172v172z" fill="none"></path>
+                            <g fill="#ffffff">
+                                <path
+                                    d="M78.83333,14.33333c-3.956,0 -7.16667,3.21067 -7.16667,7.16667v57.33333h-28.66667l43,43l43,-43h-28.66667v-57.33333c0,-3.956 -3.21067,-7.16667 -7.16667,-7.16667zM14.33333,143.33333v14.33333h143.33333v-14.33333z">
+                                </path>
+                            </g>
+                        </g>
+                    </svg>
+                    Descargar</button>
+    
+            </div>
+        </div>
+
+
+        <nz-table style="width: 100%;" #basicTable [nzData]="listOfData" [nzSize]="'small'" [nzPageSize]="20" [nzPageSizeOptions]="[10, 20, 30, 40]" [nzFooter]="amountData">
+            <thead >
+                <tr>
+                    <th>ID</th>
+                    <th>RUT</th>
+                    <th>DV</th>
+                    <th>NOMBRE</th>
+                    <th>TELÉFONO</th>
+                    <th>COMUNA</th>
+                    <th>REGIÓN</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let data of basicTable.data">
+                    <td>{{ data.ID }}</td>
+                    <td>{{ data.RUT }}</td>
+                    <td>{{ data.DV }}</td>
+                    <td>{{ data.NOMBRE }}</td>
+                    <td>{{ data.TELEFONO }}</td>
+                    <td>{{ data.COMUNA }}</td>
+                    <td>{{ data.REGION }}</td>                    
+                </tr>
+            </tbody>
+        </nz-table>
+
+
+    </div>
+
+
+</div>
+
+
+<div *ngIf="changing"  id="changing">
+    <ng-template #indicatorTemplate><i nz-icon nzType="loading" style="font-size: 24px;"></i> </ng-template>
+    <nz-spin nzSimple [nzIndicator]="indicatorTemplate"> </nz-spin>
+</div>
