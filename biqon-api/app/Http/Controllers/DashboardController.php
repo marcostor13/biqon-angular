@@ -7,10 +7,16 @@ use DB;
 
 class DashboardController extends Controller
 {
+
+    public $production = false; 
+
+    public function __construct(){
+        if($_SERVER['HTTP_HOST'] == 'binteraction.cl' || $_SERVER['HTTP_HOST'] == '35.238.14.128') $this->production = true;
+    }
+
     public function getDataDashboard(Request $request){
-        // header('Access-Control-Allow-Origin: "http://35.238.14.128"');
-        // header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
-        // header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
+
+        $database = ($this->production) ? 'mysql' : 'mysql2'; 
         
         if ($request->data['name'] == '' && $request->data['phone'] == '' && $request->data['comuna'] == '' && $request->data['region'] == '' && $request->data['rut'] == '' && $request->data['rutList'] == '' && $request->data['from'] == '' && $request->data['to'] == ''){            
             return false;        
@@ -33,7 +39,7 @@ class DashboardController extends Controller
 
         if($rut != ''){
 
-            return DB::connection('mysql2')->table('contactos')
+            return DB::connection($database)->table('contactos')
                     ->where('RUT', $rut)
                     ->where('TELEFONO', 'LIKE' ,"%$phone%")
                     ->where('NOMBRE', 'LIKE',  "%$name%")
@@ -41,7 +47,7 @@ class DashboardController extends Controller
                     ->where('REGION', 'LIKE',  "%$region%")
                     ->get();
         }else if($from != '' && $to != '' && $typeBetween == 'Between' ){
-            return DB::connection('mysql2')->table('contactos')
+            return DB::connection($database)->table('contactos')
                     ->where('TELEFONO', 'LIKE' ,"%$phone%")
                     ->where('NOMBRE', 'LIKE',  "%$name%")
                     ->where('COMUNA', 'LIKE',  "%$comuna%")
@@ -49,7 +55,7 @@ class DashboardController extends Controller
                     ->whereBetween('RUT', [intval($from), intval($to)])
                     ->get();
         }else if($from != '' && $to != '' && $typeBetween== 'Except' ) {
-            return DB::connection('mysql2')->table('contactos')
+            return DB::connection($database)->table('contactos')
                     ->where('TELEFONO', 'LIKE' ,"%$phone%")
                     ->where('NOMBRE', 'LIKE',  "%$name%")
                     ->where('COMUNA', 'LIKE',  "%$comuna%")
@@ -57,7 +63,7 @@ class DashboardController extends Controller
                     ->whereNotBetween('RUT', [intval($from), intval($to)])
                     ->get();
         }else if($rutList != ''){
-            return DB::connection('mysql2')->table('contactos')
+            return DB::connection($database)->table('contactos')
                     ->where('TELEFONO', 'LIKE' ,"%$phone%")
                     ->where('NOMBRE', 'LIKE',  "%$name%")
                     ->where('COMUNA', 'LIKE',  "%$comuna%")
@@ -65,7 +71,7 @@ class DashboardController extends Controller
                     ->whereIn('RUT', $rutList)
                     ->get();
         }else{
-            return DB::connection('mysql2')->table('contactos')
+            return DB::connection($database)->table('contactos')
                     ->where('TELEFONO', 'LIKE' ,"%$phone%")
                     ->where('NOMBRE', 'LIKE',  "%$name%")
                     ->where('COMUNA', 'LIKE',  "%$comuna%")
