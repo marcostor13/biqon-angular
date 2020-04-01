@@ -8,7 +8,9 @@ use DB;
 class DashboardController extends Controller
 {
     public function getDataDashboard(Request $request){
-
+        header('Access-Control-Allow-Origin: *');
+        header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
+        header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
         
         if ($request->data['name'] == '' && $request->data['phone'] == '' && $request->data['comuna'] == '' && $request->data['region'] == '' && $request->data['rut'] == '' && $request->data['rutList'] == '' && $request->data['from'] == '' && $request->data['to'] == ''){            
             return false;        
