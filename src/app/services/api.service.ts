@@ -11,7 +11,7 @@ export class ApiService {
 
   constructor(private http: HttpClient, private cookie: CookieService) {
     if (window.location.href.indexOf('35.238.14.128') > -1 || window.location.href.indexOf('binteraction.cl') > -1) {
-      this.url = 'http://35.238.14.128/biqon-angular/biqon-api/public/api/';
+      this.url = 'http://binteractionbackend.tk/api/';
     } else {
       this.url = 'http://localhost:8000/api/';
     }
