@@ -112,34 +112,38 @@
         </div>
 
 
-        <nz-table style="width: 100%;" #basicTable [nzData]="listOfData" [nzSize]="'small'" [nzPageSize]="20" [nzPageSizeOptions]="[10, 20, 30, 40]" [nzFooter]="amountData">
-            <thead >
-                <tr>
-                    <th>ID</th>
-                    <th>RUT</th>
-                    <th>DV</th>
-                    <th>NOMBRE</th>
-                    <th>CÓDIGO AREA</th>
-                    <th>TELÉFONO</th>
-                    <th>DIRECCIÓN</th>
-                    <th>COMUNA</th>
-                    <th>REGIÓN</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let data of basicTable.data">
-                    <td>{{ data.ID }}</td>
-                    <td>{{ data.RUT }}</td>
-                    <td>{{ data.DV }}</td>
-                    <td>{{ data.NOMBRE }}</td>
-                    <td>{{ data.COD_AREA }}</td>
-                    <td>{{ data.TELEFONO }}</td>
-                    <td>{{ data.DIRECCION }}</td>
-                    <td>{{ data.REGION }}</td>                    
-                    <td>{{ data.REGION }}</td>                    
-                </tr>
-            </tbody>
-        </nz-table>
+        <div class="col-12 table-responsive">
+            <nz-table style="width: 100%; max-width: 100%;" #basicTable [nzData]="listOfData" [nzSize]="'small'" [nzPageSize]="20" [nzPageSizeOptions]="[10, 20, 30, 40]" [nzFooter]="amountData">
+                <thead >
+                    <tr>
+                        <th>ID</th>
+                        <th>RUT</th>
+                        <th>DV</th>
+                        <th>NOMBRE</th>
+                        <th>CÓDIGO AREA</th>
+                        <th>TELÉFONO</th>
+                        <th>DIRECCIÓN</th>
+                        <th>COMUNA</th>
+                        <th>REGIÓN</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let data of basicTable.data">
+                        <td>{{ data.ID }}</td>
+                        <td>{{ data.RUT }}</td>
+                        <td>{{ data.DV }}</td>
+                        <td>{{ data.NOMBRE }}</td>
+                        <td>{{ data.COD_AREA }}</td>
+                        <td>{{ data.TELEFONO }}</td>
+                        <td>{{ data.DIRECCION }}</td>
+                        <td>{{ data.REGION }}</td>                    
+                        <td>{{ data.REGION }}</td>                    
+                    </tr>
+                </tbody>
+            </nz-table>
+
+        </div>
+
 
 
     </div>
