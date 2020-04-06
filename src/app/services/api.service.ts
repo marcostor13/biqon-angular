@@ -10,7 +10,7 @@ export class ApiService {
   url: string = ''; // disponer url de su servidor que tiene las páginas PHP
 
   constructor(private http: HttpClient, private cookie: CookieService) {
-    if (window.location.href.indexOf('35.238.14.128') > -1 || window.location.href.indexOf('binteraction.cl') > -1) {
+    if (window.location.href.indexOf('35.238.14.128') > -1 || window.location.href.indexOf('binteraction' ) > -1) {
       this.url = 'http://binteractionbackend.tk/api/';
     } else {
       this.url = 'http://localhost:8000/api/';
