@@ -19,6 +19,7 @@ import { HeaderComponent } from './components/partials/header/header.component';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { ExcelService } from './services/excel.service';
+import { UploadDataComponent } from './components/pages/upload-data/upload-data.component';
 
 registerLocaleData(es);
 
@@ -28,7 +29,8 @@ registerLocaleData(es);
     LoginComponent,
     RegisterComponent,
     HomeComponent,
-    HeaderComponent
+    HeaderComponent,
+    UploadDataComponent
   ],
   imports: [
     BrowserModule,

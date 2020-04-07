@@ -1,0 +1,23 @@
+<app-header></app-header>
+
+
+<div class="container-fluid bg-white">
+    
+  <div class="row mt-5 justify-content-center">
+    <div class="col-9 file bg-color2 p-0 m-0 shadow">
+      <input [formControl]="file"  type="file" class="form-control" (change)="uploadedFile($event)" placeholder="Upload file" accept=".xlsx">
+      <p class="text-white bg-color1 d-flex justify-content-center align-items-center">{{excel}}</p>
+    </div>
+
+    <div class="col-12 justify-content-center align-items-center row mt-5">
+        <p>{{response}}</p>
+    </div>
+   
+  </div>
+  
+</div>
+
+<div *ngIf="changing" id="changing">
+    <ng-template #indicatorTemplate><i nz-icon nzType="loading" style="font-size: 24px;"></i> </ng-template>
+    <nz-spin nzSimple [nzIndicator]="indicatorTemplate"> </nz-spin>
+</div>

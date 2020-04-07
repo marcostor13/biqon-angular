@@ -22,6 +22,7 @@ Route::post('register', 'ApiController@register');
 Route::group(['middleware' => ['jwt.auth'] ], function () {
     Route::post('logout', 'ApiController@logout');
     Route::post('getDataDashboard', 'DashboardController@getDataDashboard');
+    Route::post('upload-data', 'DashboardController@uploadData');
     
     
 });
