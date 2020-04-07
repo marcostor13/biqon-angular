@@ -13,7 +13,6 @@ import { ExcelService } from 'src/app/services/excel.service';
 })
 export class HomeComponent implements OnInit {
   data: any = [];
-
   user: any = null
   isLogged: Boolean = null
   changing: Boolean = false

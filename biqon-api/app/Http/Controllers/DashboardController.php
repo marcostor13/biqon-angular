@@ -80,4 +80,74 @@ class DashboardController extends Controller
         }
      
     }
+
+    public function getLetters(){
+        return ['A','B','C','D','E','F','G','H','I'];  //aumentar si es necesario
+    }
+
+
+    public function uploadData(Request $request){
+
+        $database = ($this->production) ? 'mysql' : 'mysql2'; 
+
+        $letters = $this->getLetters(); 
+        $data = [];
+
+        foreach ($request->data as $r) {
+
+            if($r[0] == '!ref') continue;
+            if($r[0] == '!margins') continue;
+            $data[$r[0]] = $r[1]['w'];          
+        }
+
+        //GET HEADERS
+
+        $headers = [];
+        $dataRes = [];
+        $dataResTotal = [];
+
+
+
+        for ($i=0; $i < count($data); $i++) { 
+            if(array_key_exists($i, $letters) && $data[$letters[$i].'1']){
+                $headers[] = $data[$letters[$i].'1']; 
+            }else{
+                break;
+            }
+        }
+
+        $x = 2; 
+        $c = 0; 
+
+        for ($i=0; $i < count($data); $i++) { 
+            if(array_key_exists($c, $letters) && array_key_exists($letters[$c].$x, $data)){     
+                if($headers[$c] == 'FECHA'){
+                    $date = date_create($data[$letters[$c].$x]);                    
+                    $dataRes[$headers[$c]] = date_format($date, 'Y-m-d'); 
+                }else{
+                    $dataRes[$headers[$c]] = $data[$letters[$c].$x]; 
+                }          
+                $c++;
+            }else{
+
+                if(count($dataRes) > 0){
+                    $dataResTotal[] = $dataRes;
+                    $dataRes = [];
+                    $x++;
+                    $c = 0; 
+                }
+
+            }
+        }    
+        
+        // return $dataResTotal;
+
+        DB::connection($database)->table('contactos')->insert($dataResTotal);
+
+        return ['status' => true];
+
+
+    }
+
+
 }

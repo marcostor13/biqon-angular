@@ -13,10 +13,26 @@ export class HeaderComponent implements OnInit {
   user: any = null;
   isLogged: Boolean = null;
 
+  active1: Boolean = false;
+  active2: Boolean = false;
+
   constructor(private router: Router, private api: ApiService, private cookie: CookieService) { }
 
   ngOnInit(): void {
     this.validateSession()
+    this.validateActiveMenu()
+  }
+
+  validateActiveMenu(){
+    let path = window.location.pathname; 
+
+    if (path.indexOf('upload-data')>-1){
+      this.active1 = false
+      this.active2 = true
+    }else{
+      this.active2 = false
+      this.active1 = true
+    }
   }
 
   validateSession() {
@@ -51,5 +67,7 @@ export class HeaderComponent implements OnInit {
 
       });
   }
+
+ 
 
 }

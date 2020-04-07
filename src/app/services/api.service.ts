@@ -23,9 +23,9 @@ export class ApiService {
     return this.http.post(`${this.url + datos.service}`, datos);
   }
 
-  // apiUpload(datos) {
-  //   return this.http.post(`${this.url + datos.service}`, datos.data, datos.extra);
-  // }
+  apiUpload(datos) {
+    return this.http.post(`${this.url + datos.service}`, datos, datos.extra);
+  }
 
   // addJob(datos) {
   //   return this.http.post(`${this.url + datos.service}`, datos, datos.extra);
