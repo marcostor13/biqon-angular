@@ -1,0 +1,33 @@
+.content-all{
+    overflow: hidden;
+    background-repeat: no-repeat;
+    background-size: cover;
+    .login-form {
+        max-width: 300px;
+    }
+    
+    .login-form-forgot {
+        float: right;
+    }
+    
+    .login-form-button {
+        width: 100%;
+    }
+
+    .card-coteiner{
+        background-color: rgba($color: #FFFFFF, $alpha: .9)
+    }
+
+    .login-form-button{
+        background-color:  rgb(8, 171, 189);
+        color: white !important;
+        border-color:   rgb(8, 171, 189);
+    }
+
+    .login-form-button:hover{
+        background-color: rgb(23, 212, 233);
+        border-color:  rgb(23, 212, 233);
+    }
+}
+
+

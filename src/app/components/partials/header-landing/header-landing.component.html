@@ -1,0 +1,27 @@
+<header class="vw-100" class="shadow row justify-content-between align-items-center p-3 m-0">
+    <div>
+        <img  width="150" src="/assets/img/logo/logo2.png" class="" alt="BINTERACTION">
+    </div>
+
+    <div>
+        <ul nz-menu nzMode="horizontal">
+            <li [routerLink]="['/dashboard-landing']" [nzSelected]="(source === 'dashboard') ? true: false" nz-menu-item>
+                <i nz-icon nzType="dashboard" nzTheme="outline"></i>
+                Dashboard
+            </li>
+            <li *ngIf="isAdmin"  [routerLink]="['/users']" [nzSelected]="(source === 'users') ? true: false" nz-menu-item>
+                <i nz-icon nzType="user" nzTheme="outline"></i>
+                Usuarios
+            </li> 
+            <li *ngIf="isAdmin"  [routerLink]="['/landings']" [nzSelected]="(source === 'landings') ? true: false" nz-menu-item>
+                <i nz-icon nzType="desktop" nzTheme="outline"></i>
+                Landings
+            </li>
+        </ul>
+    </div>
+
+    <div class="mr-4">
+        <i (click)="logout()" title="Salir" nz-icon nzType="logout" nzTheme="outline" class="f-21 cursor"></i>
+    </div>
+    
+</header>

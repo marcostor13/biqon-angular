@@ -9,7 +9,7 @@
                 <i nz-icon nzType="dashboard" nzTheme="outline"></i>
                 Dashboard
             </li>
-            <li [routerLink]="['/upload-data']" [nzSelected]="active2" nz-menu-item>
+            <li *ngIf="isAdmin" [routerLink]="['/upload-data']" [nzSelected]="active2" nz-menu-item>
                 <i nz-icon nzType="database" nzTheme="outline"></i>
                 Datos
             </li>           

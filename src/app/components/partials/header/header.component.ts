@@ -12,6 +12,7 @@ export class HeaderComponent implements OnInit {
 
   user: any = null;
   isLogged: Boolean = null;
+  isAdmin: Boolean = null; 
 
   active1: Boolean = false;
   active2: Boolean = false;
@@ -19,8 +20,15 @@ export class HeaderComponent implements OnInit {
   constructor(private router: Router, private api: ApiService, private cookie: CookieService) { }
 
   ngOnInit(): void {
-    this.validateSession()
+    this.user = this.api.validateSessionAdminOrRut('login')    
     this.validateActiveMenu()
+    this.isAdminValidate()
+  }
+
+  isAdminValidate(){
+    if (this.user.user.role === 'admin') {
+      this.isAdmin = true;
+    }
   }
 
   validateActiveMenu(){
@@ -32,16 +40,6 @@ export class HeaderComponent implements OnInit {
     }else{
       this.active2 = false
       this.active1 = true
-    }
-  }
-
-  validateSession() {
-    if (this.cookie.get('ud') && this.cookie.get('ud') != '') {
-      this.user = JSON.parse(this.cookie.get('ud'));
-      this.api.c('USER DATA', this.user);
-      this.isLogged = true;
-    } else {
-      this.router.navigate(['/login']);
     }
   }
 

@@ -20,6 +20,14 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { ExcelService } from './services/excel.service';
 import { UploadDataComponent } from './components/pages/upload-data/upload-data.component';
+import { LoginLandingComponent } from './components/auth/login-landing/login-landing.component';
+import { DashboardComponent } from './components/pages-landing/dashboard/dashboard.component';
+import { HeaderLandingComponent } from './components/partials/header-landing/header-landing.component';
+import { UsersComponent } from './components/pages-landing/users/users.component';
+import { LandingsComponent } from './components/pages-landing/landings/landings.component';
+import { EditLandingComponent } from './components/partials/edit-landing/edit-landing.component';
+import { LinkComponent } from './components/partials/inputs/link/link.component';
+import { FormComponent } from './components/partials/inputs/form/form.component';
 
 registerLocaleData(es);
 
@@ -30,7 +38,15 @@ registerLocaleData(es);
     RegisterComponent,
     HomeComponent,
     HeaderComponent,
-    UploadDataComponent
+    UploadDataComponent,
+    LoginLandingComponent,
+    DashboardComponent,
+    HeaderLandingComponent,
+    UsersComponent,
+    LandingsComponent,
+    EditLandingComponent,
+    LinkComponent,
+    FormComponent
   ],
   imports: [
     BrowserModule,

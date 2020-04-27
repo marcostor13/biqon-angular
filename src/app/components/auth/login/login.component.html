@@ -1,7 +1,10 @@
 <div class="content-all vw-100 vh-100 row align-items-center justify-content-center" style="background-image: url(/assets/img/backgrounds/background1.jpg);" >
     <div class="card-coteiner p-4 rounded shadow col-xl-3 col-10 row justify-content-center">
         <div class="row justify-content-center mb-3 col-12">
-            <img width="140" src="/assets/img/logo/logo2.png" alt="BINTERACTION">
+            <img width="160" src="/assets/img/logo/logo2.png" alt="BINTERACTION">
+            <div class="col-12 mt-3">
+                <h5 class="text-center text-color2 font-weight-bold">SISTEMA RUT</h5>
+            </div>
         </div>
         <form nz-form [formGroup]="formLogin" class="login-form col-12" (ngSubmit)="onLogin()">
             <nz-form-item>
@@ -18,10 +21,8 @@
                     </nz-input-group>
                 </nz-form-control>
             </nz-form-item>
-            <nz-form-item>
-                <nz-form-control>                
-                    <button nz-button class="login-form-button" [nzType]="'primary'">Ingresar</button>                
-                </nz-form-control>
+            <nz-form-item>          
+                    <button  class="col-12 rounded border-0 bg-color2 text-white pt-2 pb-2 hover">Ingresar</button>                
             </nz-form-item>
             <div class="col-12">
                 <p class="text-center">{{response}}</p>

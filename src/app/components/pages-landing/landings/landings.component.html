@@ -1,0 +1,127 @@
+<app-header-landing source="landings"></app-header-landing>
+
+<div class="row mt-5 m-0 p-0">
+
+    <div class="vw-100 bg-color2 p-0 m-0 align-items-center">
+        <h5 class="ml-5 text-white font-300 m-0 pt-2 mb-2">Landings</h5>
+    </div>
+
+    <div class="col-12 pt-5 pl-5 pr-5">
+        <button [routerLink]="['/edit-landing', 0]" class="row bg-color4 text-white p-0 m-0 pl-4 pr-4">
+            <i nz-icon nzType="user-add" nzTheme="outline" class="f-14 icon-white mr-1"></i> Agregar landing
+        </button>
+    </div>
+
+    <div class="col-12 table-responsive pt-5 pl-5 pr-5">
+        <nz-table style="width: 100%; max-width: 100%; min-width: 600px;" #basicTable [nzData]="dataUsers" [nzSize]="'small'" [nzPageSize]="20" [nzPageSizeOptions]="[10, 20, 30, 40]">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>NOMBRE</th>
+                    <th>CORREO</th>
+                    <th>PERMISOS</th>
+                    <th>ROL</th>
+                    <th>CLIENTES</th>
+                    <th>OPCIONES</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let data of basicTable.data">
+                    <td>{{ data.id }}</td>
+                    <td>{{ data.name }}</td>
+                    <td>{{ data.email }}</td>
+                    <td>{{ data.permits }}</td>
+                    <td>{{ data.role }}</td>
+                    <td>{{ data.clients }}</td>
+                    <td class="row">
+                        <div class="cursor">
+                            <i (click)="showDeleteConfirm('delete-user', data.id)" nz-icon nzType="delete" nzTheme="outline"></i>
+                        </div>
+                        <div class="ml-2 cursor">
+                            <i (click)="openModal('edit-user', data.id)" nz-icon nzType="edit" nzTheme="outline"></i>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </nz-table>
+    
+    </div>
+
+    
+
+
+</div>
+
+<div *ngIf="changing" id="changing">
+    <ng-template #indicatorTemplate><i nz-icon nzType="loading" style="font-size: 24px;"></i> </ng-template>
+    <nz-spin nzSimple [nzIndicator]="indicatorTemplate"> </nz-spin>
+</div>
+
+<nz-modal [(nzVisible)]="isVisible" nzTitle="{{titleModal}}" [nzFooter]="modalFooter" (nzOnCancel)="handleCancel()">
+    <div class="formModal row p-2">
+        <ng-container *ngFor="let i of inputs">
+            
+            <!-- TEXT && NUMBER-->
+            <input *ngIf="i.type =='text' || i.type == 'number'" class="col-12 mt-2" type="{{i.type}}" value="{{i.value}}" placeholder="{{i.placeholder}}" id="{{i.key}}">
+            
+            <!-- DATE-->
+            <input *ngIf="i.type =='date'" class="col-12 mt-2" type="{{i.type}}" value="{{i.value}}" placeholder="{{i.placeholder}}" id="{{i.key}}">           
+            <textarea *ngIf="i.type =='textarea'" class="col-12 mt-2" value="{{i.value}}" placeholder="{{i.placeholder}}" id="{{i.key}}" cols="20" rows="3"></textarea>          
+            
+            <!-- SELECT MULTIPLE-->    
+            <div class="col-12 mt-2 p-0">
+                <ng-container *ngIf="i.type == 'select-multiple'">
+                    <ng-container [ngSwitch]="i.key">
+                        <ng-container *ngSwitchCase="'permits'">
+                            <nz-select  [nzMaxTagCount]="3"  nzMode="multiple" nzPlaceHolder="{{i.placeholder}}" [(ngModel)]="permits">
+                                <ng-container *ngIf="i.data">
+                                    <nz-option *ngFor="let option of i.data" [nzLabel]="option.label" [nzValue]="option.value"></nz-option>
+                                </ng-container>                                
+                            </nz-select>
+                        
+                        </ng-container>
+
+                    </ng-container>
+                </ng-container>    
+            </div>
+
+            <!-- SELECT SIMPLE-->
+            <div class="col-12 mt-2 p-0">
+                <ng-container *ngIf="i.type == 'select'">
+                    <ng-container [ngSwitch]="i.key">
+                        <ng-container *ngSwitchCase="'role'">
+                            <nz-select [(ngModel)]="role" nzAllowClear nzPlaceHolder="{{i.placeholder}}">
+                                <nz-option *ngFor="let item of roles" nzValue="{{item.id}}" nzLabel="{{item.name}}"></nz-option>
+                            </nz-select>
+                        </ng-container>
+
+                        <ng-container *ngSwitchCase="'users'">
+                            <nz-select [(ngModel)]="useridClient" nzAllowClear nzPlaceHolder="{{i.placeholder}}">
+                                <nz-option *ngFor="let item of dataUsers" nzValue="{{item.id}}" nzLabel="{{item.name}}"></nz-option>
+                            </nz-select>
+                        </ng-container>
+
+                        <ng-container *ngSwitchCase="'userid'">
+                            <nz-select [(ngModel)]="useridClient" nzAllowClear nzPlaceHolder="{{i.placeholder}}">
+                                <nz-option *ngFor="let item of dataUsers" nzValue="{{item.id}}" nzLabel="{{item.name}}"></nz-option>
+                            </nz-select>
+                        </ng-container>
+
+                      
+
+                    </ng-container>
+                </ng-container>
+            </div>
+            
+
+
+
+        </ng-container>
+    </div>
+    <ng-template #modalFooter>
+        <div class="row justify-content-end">         
+            <button class="btn1 p-1" (click)="handleOk()">Guardar</button>
+            <button class="btn2 p-1" (click)="handleCancel()">Cancelar</button>
+        </div>
+    </ng-template>
+</nz-modal>

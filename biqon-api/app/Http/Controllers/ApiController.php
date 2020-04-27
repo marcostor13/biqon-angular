@@ -37,6 +37,39 @@ class ApiController extends Controller
             ->join('role_user', 'role_user.user_id', 'users.id')
             ->join('roles', 'roles.id', 'role_user.role_id')
             ->where('users.email', $request->email)
+            ->where(function($query) {
+                $query->where('users.permits', 'LIKE' ,'%rut%')
+                      ->orWhere('roles.name', 'admin');
+            })
+            ->first();
+
+        return response()->json([
+            'success' => true,
+            'token' => $token,
+            'user' => $user
+        ]);
+    }
+
+    public function loginLanding(Request $request)
+    {
+        $input = $request->only('email', 'password');
+        $token = null;
+
+        if(!$token = JWTAuth::attempt($input)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid Email or Password',
+            ], 401);
+        }    
+
+        $user = User::select('users.*', 'roles.name as role', 'roles.id as role_id')
+            ->join('role_user', 'role_user.user_id', 'users.id')
+            ->join('roles', 'roles.id', 'role_user.role_id')
+            ->where('users.email', $request->email)
+            ->where(function($query) {
+                $query->where('users.permits', 'LIKE' ,'%landing%')
+                      ->orWhere('roles.name', 'admin');
+            })
             ->first();
 
         return response()->json([
@@ -85,6 +118,7 @@ class ApiController extends Controller
         if(!$getUser){
             $user = new User();
             $user->name = $request->name;
+            $user->permits = $request->permits;
             $user->email = $request->email;
             $user->categoryid = $request->categoryid;
             $user->password = bcrypt($request->password);        

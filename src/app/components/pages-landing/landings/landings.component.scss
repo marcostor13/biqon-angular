@@ -1,0 +1,38 @@
+#changing{
+    min-width: 100vw;
+    min-height: 100vh;
+    position: fixed;
+    top:0;
+    left:0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba($color: #FFFFFF, $alpha: .7);
+}
+
+input, select{
+    line-height: 1.5;
+    box-sizing: border-box;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    min-height: 30px;
+}
+
+nz-select {
+    // margin-right: 8px;
+    width: 100%;
+}
+
+button {
+    border: none; 
+    min-height: 30px;
+    border-radius: 4px;
+
+
+}
+
+button:hover{
+    opacity: .8;
+}
+
+

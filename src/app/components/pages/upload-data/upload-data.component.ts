@@ -25,18 +25,9 @@ export class UploadDataComponent implements OnInit {
   response: String = '';
 
   ngOnInit(): void {
-    this.validateSession()
+    this.user = this.api.validateSessionOnlyAdmin('login')
   }
-
-  validateSession() {
-    if (this.cookie.get('ud') && this.cookie.get('ud') != '') {
-      this.user = JSON.parse(this.cookie.get('ud'));
-      this.api.c('USER DATA', this.user);
-      this.isLogged = true;
-    } else {
-      this.router.navigate(['/login']);
-    }
-  }
+  
 
   title = 'read-excel-in-angular8';
   storeData: any;

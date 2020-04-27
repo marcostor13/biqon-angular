@@ -1,0 +1,211 @@
+<app-header-landing source="landings"></app-header-landing>
+
+
+<div class="row m-0 p-0">
+
+    <div class="col-12 pt-5 pl-5 pr-5">
+        <button [routerLink]="['/landings']" class="row bg-color4 text-white p-0 m-0 pl-4 pr-4">
+            <i nz-icon nzType="caret-left" nzTheme="outline" class="f-14 icon-white mr-1"></i> Regresar
+        </button>
+    </div>
+
+    <div class="vw-100 bg-color2 p-0 m-0 align-items-center mt-5">
+        <h5 class="ml-5 text-white font-300 m-0 pt-2 mb-2">{{titlePage}}</h5>
+    </div>
+
+    <div class="row p-0 p-md-5 p-0 m-0 align-items-center">
+
+        <div class="col-12 col-lg-7">
+
+            <div class="row flex-wrap p-2 pt-5 p-md-5 col-12 shadow p-0 m-0">
+                <div class="form-group  col-12 col-md-12">
+                    <label>Título</label>
+                    <input type="text" class="form-control" [formControl]="name" placeholder="Ingrese un titulo" >
+                </div>
+       
+                <div class="form-group col-12 col-md-6">
+                    <label>Logo</label>
+                    <input type="text" class="form-control" [formControl]="logoUrl" placeholder="Ingrese una url">
+                    <h5 class="mt-2 text-center">ó</h5>
+                    <div class="formFile bg-color2 p-0">
+                        <input #imageInput  accept="image/png" (change)="handleFileInput($event.target.files, 'logo')"  type="file" [formControl]="logoUpload">
+                        <div>
+                            <label class="text-white">{{nameInputFileLogo}}</label>
+                        </div>
+                    </div> 
+                </div>
+    
+                <div class="form-group col-12 col-md-6">
+                    <label>Imagen de fondo</label>
+                    <input type="text" class="form-control" [formControl]="backgroundImageUrl" placeholder="Ingrese una imagen">
+                    <h5 class="mt-2 text-center">ó</h5>
+                    <div class="formFile bg-color2 p-0">
+                        <input #imageInput  accept="image/*" (change)="handleFileInput($event.target.files, 'background')"  type="file" [formControl]="backgroundImageUpload">
+                        <div>
+                            <label class="text-white">{{nameInputFileBackground}}</label>
+                        </div>
+                    </div> 
+                </div>
+                
+                <div class="form-group  col-12 col-md-6">
+                    <label>Opacidad del fondo</label>
+                    <input type="range" min="0" max="1" step="0.1" class="form-control" [formControl]="opacity">
+                </div>
+    
+                <div class="col-12 mt-2">
+                    <p class="text-color2 f-13 font-500">Campos</p>
+                    <button (click)="addInput()" class="row bg-color4 text-white p-0 m-0 pl-4 pr-4">
+                        <i nz-icon nzType="plus" nzTheme="outline" class="f-14 icon-white mr-1"></i> Agregar campo
+                    </button>
+                </div>
+    
+    
+                <div class="col-12 table-responsive mt-4">
+                    <nz-table style="width: 100%; max-width: 100%; min-width: 600px;" #basicTable [nzData]="arrayElements" [nzSize]="'small'" [nzPageSize]="20" [nzPageSizeOptions]="[10, 20, 30, 40]">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>NOMBRE</th>
+                                <th>ETIQUETA</th>                            
+                                <th>OPCIONES</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let data of basicTable.data; index as i">
+                                <td>{{ i+1 }}</td>
+                                <td>{{ data.name }}</td>
+                                <td>{{ data.tag }}</td>
+                                <td class="row">
+                                    <div class="cursor">
+                                        <i (click)="showDeleteConfirm('delete-element', i)" nz-icon nzType="delete" nzTheme="outline"></i>
+                                    </div>
+                                    <div class="ml-2 cursor">
+                                        <i (click)="editInput(data, i)" nz-icon nzType="edit" nzTheme="outline"></i>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </nz-table>
+                
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-12 col-lg-5">
+            <div class="col-12 row justify-content-center">
+                <div id="preview">
+    
+                    <div class="content-preview container-fluid" style="background-image: url({{backgroundImageUrl.value}});">
+                        <div class="opacity" style="background-color: rgba(0, 0, 0, {{opacity.value}});"></div>    
+                        <div class="row html">
+                            
+                            <div class="col-12 mt-4 row justify-content-center p-0 m-0">
+                                <h5>{{name.value}}</h5>
+                            </div>
+    
+                            <div class="col-12 mt-4 row justify-content-center p-0 m-0">
+                                <img width="200px" src="{{logoUrl.value}}" alt=''>
+                            </div>
+
+                            <ng-container *ngFor="let item of arrayElements">       
+                                
+                                <ng-container [ngSwitch]="item.type">
+                                    <div *ngSwitchCase="'link'" class="col-12 mt-4 row justify-content-center p-0 m-0">
+                                        <a href="{{item.href}}">{{item.name}}</a>
+                                    </div>
+                                                                  
+                                </ng-container>
+                                
+                                
+
+
+                            </ng-container>
+                            
+    
+                        </div>
+                    </div>
+    
+                </div>
+            </div>
+
+        </div>
+
+
+
+
+            <div class="row form-group  col-12 mt-5 justify-content-end  m-0">
+
+                <button class="bg-color4 text-white p-0 m-0 pl-4 pr-4" [disabled]="disabledCreateLanding">Crear Landing</button>
+                <button [routerLink]="['/landings']" class="bg-color5 text-white p-0 m-0 pl-4 pr-4 ml-4" >Cancelar</button>
+
+            </div>
+
+
+
+
+        
+
+
+    </div>
+
+
+
+</div>
+
+
+<div *ngIf="changing" id="changing">
+    <ng-template #indicatorTemplate><i nz-icon nzType="loading" style="font-size: 24px;"></i> </ng-template>
+    <nz-spin nzSimple [nzIndicator]="indicatorTemplate"> </nz-spin>
+</div>
+
+<nz-modal [(nzVisible)]="isVisible" nzTitle="{{titleModal}}" [nzFooter]="modalFooter" (nzOnCancel)="handleCancel()">
+    <div class="formModal row p-2">
+        
+        <!-- SELECT ELEMENT-->
+        <div class="col-12 mt-4 p-0">
+            <nz-select [(ngModel)]="element" (ngModelChange)="typeElement=element" nzPlaceHolder="Seleccione el elemento">
+                <nz-option nzValue="link" nzLabel="Enlace"></nz-option>
+                <nz-option nzValue="form" nzLabel="Formulario"></nz-option>
+                <nz-option nzValue="input" nzLabel="Entrada"></nz-option>
+                <nz-option nzValue="parraf" nzLabel="Párrafo"></nz-option>
+                <nz-option nzValue="title" nzLabel="Título"></nz-option>
+                <nz-option nzValue="video" nzLabel="Video"></nz-option>
+
+
+                <nz-option nzValue="image" nzLabel="Imagen"></nz-option>
+            </nz-select>
+        </div>
+        
+        <div *ngIf="typeElement" class="col-12 mt-2 p-0">
+            <ng-container [ngSwitch]="typeElement">
+
+                <!-- LINK -->
+                <ng-container *ngSwitchCase="'link'">
+                    <app-link (dataOutput)='eventOutputApplink($event)' [data]="dataInput" ></app-link>
+                </ng-container>
+                <!-- END LINK -->
+
+                <!-- FORM -->
+                <ng-container *ngSwitchCase="'form'">
+                    <app-form (dataOutput)='eventOutputApplink($event)' [data]="dataInput"></app-form>
+                </ng-container>
+                <!-- END FORM -->
+
+                <ng-container *ngSwitchDefault>
+                
+                </ng-container>
+             
+            </ng-container>
+        </div>
+            
+
+    </div>
+    <ng-template #modalFooter>
+        <div class="row justify-content-end">         
+            <button class="btn1 p-1" (click)="saveInput()" [disabled]="disabledSave">Guardar</button>
+            <button class="btn2 p-1" (click)="handleCancel()">Cancelar</button>
+        </div>
+    </ng-template>
+</nz-modal>

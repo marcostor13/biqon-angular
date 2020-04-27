@@ -12,7 +12,7 @@ import { ExcelService } from 'src/app/services/excel.service';
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
-  data: any = [];
+  data: any = []
   user: any = null
   isLogged: Boolean = null
   changing: Boolean = false
@@ -28,29 +28,22 @@ export class HomeComponent implements OnInit {
   rutList: any = ''
   from: any = ''
   to: any = ''
-  amountData: any = '';
-  totalRut: any = '';
-  amountDataUnique: any = [];
-  totalPhone: any = '';
-  totaRegion: any = '';
+  amountData: any = ''
+  totalRut: any = ''
+  amountDataUnique: any = []
+  totalPhone: any = ''
+  totaRegion: any = ''
+  isVisible: Boolean = false
+  titleModal: String = ''
+  addressList: any = []
 
-  listOfData:any = [];
+  listOfData:any = []
 
   constructor(private router: Router, private api: ApiService, private cookie: CookieService, private excelService: ExcelService) { }
 
   ngOnInit(): void {
-    this.validateSession()
-  }
-
-  validateSession() {    
-    if (this.cookie.get('ud') && this.cookie.get('ud') != '') {
-      this.user = JSON.parse(this.cookie.get('ud'));
-      this.api.c('USER DATA', this.user);
-      this.isLogged = true;
-    }else{
-      this.router.navigate(['/login']);
-    }
-  }
+    this.user = this.api.validateSessionOnlyAdmin('login');
+  }  
 
   getData() {
     this.result = false
@@ -77,7 +70,8 @@ export class HomeComponent implements OnInit {
       this.api.c('GET DATA', r)
       this.changing = false
       this.result = true
-      this.listOfData = r
+      this.listOfData = this.orderTableByPhone(r)
+      this.api.c('GET DATA CHANGED', this.listOfData)
       this.totalRut= r.length
       this.amountData = 'Total: ' + r.length + ' contactos'
       this.getUnique(r, 'RUT')
@@ -96,6 +90,61 @@ export class HomeComponent implements OnInit {
 
       });
   }
+
+  orderTableByPhone(e){
+    var count
+    var res = []
+    
+    e.forEach(element => {
+
+      if (res.length > 0) {
+
+        for (let i = 0; i < res.length; i++) {
+          if (element.COMUNA == res[i].COMUNA && element.REGION == res[i].REGION && element.TELEFONO == res[i].TELEFONO) {  // SI SE ENCUENTRA AL ELEMENTO
+            
+            if (res[i].DIRECCION.indexOf(element.DIRECCION.trim()) == -1){
+              res[i].DIRECCION.push(element.DIRECCION)
+            }
+            
+            break;
+          } else {  // SI NO SE ENCUENTRA AL ELEMENTO
+            if (i == res.length-1) {
+              res.push({
+                ID: element.ID,
+                RUT: element.RUT,
+                DV: element.DV,
+                NOMBRE: element.NOMBRE,
+                COD_AREA: element.COD_AREA,
+                TELEFONO: element.TELEFONO,
+                DIRECCION: [element.DIRECCION],
+                COMUNA: element.COMUNA,
+                REGION: element.REGION
+              });
+            }
+          }
+          
+        }        
+      }else{ // SI RES ES === 0 
+        res.push({
+          ID : element.ID,
+          RUT : element.RUT,
+          DV : element.DV,
+          NOMBRE : element.NOMBRE,
+          COD_AREA : element.COD_AREA,
+          TELEFONO : element.TELEFONO,
+          DIRECCION : [element.DIRECCION],
+          COMUNA : element.COMUNA,
+          REGION : element.REGION
+        });
+      }
+      
+
+    });
+    return res;
+
+  }
+
+  
 
   getUnique(r, type){
     var i=0; 
@@ -141,7 +190,31 @@ export class HomeComponent implements OnInit {
   }
 
   exportAsXLSX(): void {
-    this.excelService.exportAsExcelFile(this.data, 'sample');
+    
+    let data = []
+    let i = 0; 
+
+    this.listOfData.forEach(e => {
+      e.DIRECCION = JSON.stringify(e.DIRECCION);
+      data.push(e);
+      i++
+      if(i == this.listOfData.length){
+        this.excelService.exportAsExcelFile(data, 'sample');
+      }
+    });
+    
+    
+    
+  }
+
+
+  viewAddress(address){
+    this.isVisible = true;
+    this.addressList = address
+  }
+
+  handleCancel(){
+    this.isVisible = false;
   }
 
  

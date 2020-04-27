@@ -40,6 +40,10 @@ body, .home, footer{
     animation:         opacity .2s; /* IE 10+, Fx 29+ */
 }
 
+.hover:hover{
+    opacity: .8;
+}
+
 
 
 //FONTS
@@ -484,6 +488,10 @@ body, .home, footer{
 }
 
 //HEADER
+
+#changing{
+    z-index: 10000;
+}
 header, #changing{
     path{
         margin-right: 6px;
@@ -500,6 +508,10 @@ header, #changing{
     
 }
 
+.ant-table-body{
+    margin: 0 0 !important;
+}
+
 .ant-table-thead{
     background-color: $color2;
     margin: 0 0 !important;
@@ -511,4 +523,14 @@ header, #changing{
     margin: 0 0 !important;
     border-top-right-radius: 4px;
     border-top-left-radius: 4px;
+}
+
+
+//ICONS
+
+.icon-white{
+    *{
+        color: white !important;
+    }
+    
 }
