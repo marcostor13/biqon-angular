@@ -5,7 +5,10 @@ import { CookieService } from 'ngx-cookie-service';
 import { NzModalService } from 'ng-zorro-antd';
 import { FormControl } from '@angular/forms';
 import { GeneralService } from 'src/app/services/general.service';
+import * as $ from 'jquery-ui';
+import { element } from 'protractor';
 
+declare let $: any;
 
 @Component({
   selector: 'app-edit-landing',
@@ -36,15 +39,38 @@ export class EditLandingComponent implements OnInit {
   dataInput: any;
   titleModal: String = 'Agregar elemento'
   idInputEdit: any = null
+  backgroundImage: String = ''
+
+  //INPUTS STYLES
+
+  isVisibleStyles: Boolean = false
+  disabledSaveStyles: Boolean = true
+  titleModalStyles: String = 'Editar estilos'
+  inputsStyles: any = []
 
   //INPUTS
 
   name = new FormControl('')
   logoUrl = new FormControl('')
   logoUpload = new FormControl('')
-  backgroundImageUrl = new FormControl('')
   backgroundImageUpload = new FormControl('')
   opacity = new FormControl('')
+  backgroundColor = new FormControl('')
+
+  //PADDING MARGIN
+
+  paddingTop: any = '0';
+  paddingBottom: any = '0';
+  paddingLeft: any = '0';
+  paddingRight: any = '0';
+  marginTop: any = '0';
+  marginBottom: any = '0';
+  marginLeft: any = '0';
+  marginRight: any = '0';
+
+  //SECCTIONS
+
+  sections:any = [];
   
 
   constructor(public route: ActivatedRoute, private router: Router, private api: ApiService, private cookie: CookieService, private modalService: NzModalService, private general: GeneralService) {
@@ -53,19 +79,86 @@ export class EditLandingComponent implements OnInit {
 
   ngOnInit(): void {
     this.user = this.api.validateSessionOnlyAdmin('login-landing')
-
     if (this.id != '0'){
       this.titlePage = 'Editar landing'
-    }
-    
+    }   
+    this.getCookieDataLanding();
+    this.eventsJquery()
 
   }
 
+  eventsJquery(){
+    var self = this
+    //Todos los elementos arrastrables
+    $(".draggable").draggable({ revert: true, helper: "clone" })
+
+    //Dropable seccion
+    $(".droppable").droppable({
+      activeClass: "activeClass",
+      hoverClass: "hoverClass",
+      drop: function (event, ui) {
+        event.preventDefault()
+        self.addElement(ui.draggable[0].innerText)
+      }
+
+    })
+
+  }
+
+  addElement(e){
+    this.api.c('addElement', e)
+
+    switch (e) {
+      case 'Sección':
+
+        if(this.sections.length === 0){
+          this.sections.push({
+            id: 'section_' + this.general.getRandomArbitrary(1000,9999),
+            elements: [],
+            styles: []
+          })
+        }
+
+
+        this.api.c('addElement sección', this.sections)
+
+        
+        break;
+    
+      default:
+        break;
+    }
+
+
+  }
+
+
+  getCookieDataLanding(){
+    let cookieDataLanding = this.cookie.get('data-landing')
+    if (cookieDataLanding && cookieDataLanding != '') {
+      this.backgroundColor.setValue(JSON.parse(this.cookie.get('data-landing')).backgroundColor)
+      this.name.setValue(JSON.parse(this.cookie.get('data-landing')).name)
+      this.opacity.setValue(JSON.parse(this.cookie.get('data-landing')).opacity)
+      this.backgroundImage = JSON.parse(this.cookie.get('data-landing')).backgroundImage
+      this.arrayElements = (JSON.parse(this.cookie.get('data-landing')).arrayElements) ? JSON.parse(this.cookie.get('data-landing')).arrayElements : []
+    }
+    this.api.c('arrayElements', this.arrayElements)
+  }
+
   //INPUTS 
-  saveInput(){
-    this.api.c('SAVE INPUT', this.dataInputsComponent)
-    this.api.c('SAVE INPUT ELEEMNT', this.element)
-    this.api.c('SAVE INPUT idInputEdit', this.idInputEdit)
+
+  saveCookieInputsElements(){
+    var dataLanding = {
+      backgroundColor: this.backgroundColor.value,
+      name: this.name.value,
+      opacity: this.opacity.value,
+      backgroundImage: this.backgroundImage,
+      arrayElements: this.arrayElements,
+    }
+    this.cookie.set('data-landing', JSON.stringify(dataLanding))
+  }
+
+  saveInput(){   
 
     if (this.idInputEdit !== null){ //EDIT ELEMENT BY INDEX
       this.arrayElements[this.idInputEdit] = this.eventElements(this.element, this.dataInputsComponent) 
@@ -73,11 +166,11 @@ export class EditLandingComponent implements OnInit {
     }else{  //ADD NEW ELEMENT
       this.arrayElements.push(this.eventElements(this.element, this.dataInputsComponent)) 
     }
-       
-    this.api.c('RESULT SAVE INPUTS', this.arrayElements)
-    this.updateArray();
-    this.isVisible = false
     
+    this.saveCookieInputsElements()
+
+    this.updateArray();
+    this.isVisible = false   
     
   }
 
@@ -123,7 +216,104 @@ export class EditLandingComponent implements OnInit {
     array.forEach(e => {
       this.arrayElements.push(e)
     });
+
+    this.saveCookieInputsElements()
     
+  }
+
+  editStyles(data){
+    let styles = (data.styles) ? data.styles : [] 
+    this.getInputsStyles(data.tag, data.id, styles)
+    this.showModalStyles()
+  }
+
+  getInputsStyles(tag, id, styles){
+    this.inputsStyles = []
+    switch (tag) {
+      case 'a':    
+        var arrayStyles = ['background-color', 'color', 'padding']    
+      break   
+    } 
+
+    arrayStyles.forEach(e => {
+      var elementStyles = this.general.searchElementByNameKey(styles, 'prop', e)
+      var value = (elementStyles) ? elementStyles.value : ''
+
+      if(e == 'padding'){
+        if(value && value != ''){
+          let v = value.split(' ');
+          if(v.length > 1){
+            this.paddingTop = v[0].replace('px','')
+            this.paddingRight = v[1].replace('px','')
+            this.paddingBottom = v[2].replace('px','')
+            this.paddingLeft = v[3].replace('px','')
+          }
+        }else{
+          this.paddingTop = '0'
+          this.paddingRight = '0'
+          this.paddingBottom = '0'
+          this.paddingLeft = '0'
+        }
+      }
+
+      if(e == 'margin'){
+        if(value && value != ''){
+          let v = value.split(' ');
+          if(v.length > 1){
+            this.marginTop = v[0].replace('px','')
+            this.marginRight = v[1].replace('px','')
+            this.marginBottom = v[2].replace('px','')
+            this.marginLeft = v[3].replace('px','')
+          }
+        } else {
+          this.marginTop = '0'
+          this.marginRight = '0'
+          this.marginBottom = '0'
+          this.marginLeft = '0'
+        }
+      }
+
+      this.inputsStyles.push({
+        id: id,
+        prop: e,
+        value: value
+      })
+    });   
+  }
+
+  saveInputsStyles(id, prop, value){
+
+    this.api.c('saveInputsStyles', value)
+    for (let i = 0; i < this.arrayElements.length; i++) {
+      if (this.arrayElements[i].id === id){
+        if (!this.arrayElements[i].styles){
+          this.arrayElements[i].styles = []
+        }
+
+        let indexProp = this.general.searchIndexByNameKey(this.arrayElements[i].styles, 'prop', prop) // BUSCA SI YA EXISTE LA PROPIEDAD
+        if (indexProp !== false){
+          this.arrayElements[i].styles[indexProp] = {
+            prop: prop,
+            value: value
+          }
+        }else{
+          this.arrayElements[i].styles.push({
+            prop: prop,
+            value: value
+          })           
+        }
+        break
+      }      
+    }
+    this.saveCookieInputsElements()
+  }
+
+  getStyles(styles){
+    var arrayStyles = {}
+    for (let i = 0; i < styles.length; i++) {      
+      arrayStyles[styles[i].prop] = styles[i].value      
+    }    
+    return arrayStyles
   }
 
   
@@ -138,6 +328,15 @@ export class EditLandingComponent implements OnInit {
   handleCancel(): void {
     this.isVisible = false
     this.resetInputModal()
+  }
+
+  showModalStyles(): void {
+    this.isVisibleStyles = true;
+  }
+
+  handleCancelStyles(): void {
+    this.isVisibleStyles = false
+    // this.resetInputModalStyles()
   }
 
 
@@ -172,8 +371,6 @@ export class EditLandingComponent implements OnInit {
 
 
   showDeleteConfirm(type, data = null): void {
-
-    this.api.c('REMOVE ITEM', data);
 
     switch (type) {
       case 'delete-element':
@@ -228,6 +425,8 @@ export class EditLandingComponent implements OnInit {
 
   eventElements(e, data){
 
+    let id = Math.floor(Math.random() * 1000);
+
     switch (e) {
       case 'link':
         
@@ -243,6 +442,7 @@ export class EditLandingComponent implements OnInit {
             let url = base_url + this.general.httpBuildQuery(vars)
             
             return {
+              id: 'a_' + id,
               type: e,
               tag: 'a',
               href: url,
@@ -253,6 +453,7 @@ export class EditLandingComponent implements OnInit {
           case 'redirect':
 
             return {
+              id: 'a_' + id,
               type: e,
               tag: 'a',
               href: data.inputValue,
@@ -264,6 +465,7 @@ export class EditLandingComponent implements OnInit {
           case 'tel':
 
             return {
+              id: 'a_' + id,
               type: e,
               tag: 'a',
               href: 'tel:+' + data.inputValue,
@@ -274,6 +476,7 @@ export class EditLandingComponent implements OnInit {
           case 'email':
 
             return {
+              id: 'a_' + id,
               type: e,
               tag: 'a',
               href: 'mailto:' + data.inputValue,

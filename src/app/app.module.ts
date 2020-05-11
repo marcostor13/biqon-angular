@@ -28,6 +28,7 @@ import { LandingsComponent } from './components/pages-landing/landings/landings.
 import { EditLandingComponent } from './components/partials/edit-landing/edit-landing.component';
 import { LinkComponent } from './components/partials/inputs/link/link.component';
 import { FormComponent } from './components/partials/inputs/form/form.component';
+import { RightclickDirective } from './directives/rightclick.directive';
 
 registerLocaleData(es);
 
@@ -46,7 +47,8 @@ registerLocaleData(es);
     LandingsComponent,
     EditLandingComponent,
     LinkComponent,
-    FormComponent
+    FormComponent,
+    RightclickDirective,
   ],
   imports: [
     BrowserModule,

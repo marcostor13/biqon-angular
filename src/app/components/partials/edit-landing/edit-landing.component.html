@@ -18,12 +18,12 @@
         <div class="col-12 col-lg-7">
 
             <div class="row flex-wrap p-2 pt-5 p-md-5 col-12 shadow p-0 m-0">
-                <div class="form-group  col-12 col-md-12">
-                    <label>Título</label>
-                    <input type="text" class="form-control" [formControl]="name" placeholder="Ingrese un titulo" >
+                <div class="form-group  col-12 col-md-6">
+                    <label>Nombre</label>
+                    <input type="text" class="form-control" [formControl]="name" placeholder="Ingrese un nombre" >
                 </div>
        
-                <div class="form-group col-12 col-md-6">
+                <!-- <div class="form-group col-12 col-md-6">
                     <label>Logo</label>
                     <input type="text" class="form-control" [formControl]="logoUrl" placeholder="Ingrese una url">
                     <h5 class="mt-2 text-center">ó</h5>
@@ -33,12 +33,10 @@
                             <label class="text-white">{{nameInputFileLogo}}</label>
                         </div>
                     </div> 
-                </div>
+                </div> -->
     
                 <div class="form-group col-12 col-md-6">
                     <label>Imagen de fondo</label>
-                    <input type="text" class="form-control" [formControl]="backgroundImageUrl" placeholder="Ingrese una imagen">
-                    <h5 class="mt-2 text-center">ó</h5>
                     <div class="formFile bg-color2 p-0">
                         <input #imageInput  accept="image/*" (change)="handleFileInput($event.target.files, 'background')"  type="file" [formControl]="backgroundImageUpload">
                         <div>
@@ -51,6 +49,61 @@
                     <label>Opacidad del fondo</label>
                     <input type="range" min="0" max="1" step="0.1" class="form-control" [formControl]="opacity">
                 </div>
+
+                <div class="form-group  col-12 col-md-6">
+                    <label>Color del fondo</label>
+                    <input type="color" class="form-control" [formControl]="backgroundColor" value="">
+                </div>
+
+                <div  *ngIf="isVisibleStyles" class="col-12 mt-2">
+                    <div class="row m-0 p-0 justify-content-start align-items-center">
+                        <p class="text-color2 f-13 font-500 mr-3 p-0 m-0">Editar estilos</p>
+                        <i (click)="handleCancelStyles()" nz-icon nzType="close-circle" nzTheme="outline"></i>
+                    </div>
+
+                    <div class="formModal row p-2">
+        
+                        <ng-container *ngFor="let i of inputsStyles">
+
+                            <ng-container [ngSwitch]="i.prop">
+                                <div *ngSwitchCase="'background-color'" class="form-group col-3 m-0 mt-2 row pl-2 pr-2 align-items-center justify-content-center">
+                                    <label>Color de fondo</label>
+                                    <input (change)="saveInputsStyles(i.id, i.prop, $event.target.value)"  type="color" class="form-control cursor" value="{{i.value}}">                
+                                </div>
+                                <div *ngSwitchCase="'color'" class="form-group col-3 m-0 mt-2 row pl-2 pr-2 align-items-center justify-content-center">
+                                    <label>Color del texto</label>
+                                    <input (change)="saveInputsStyles(i.id, i.prop, $event.target.value)"  type="color" class="form-control cursor" value="{{i.value}}">                
+                                </div>
+
+                                <div *ngSwitchCase="'padding'" class="form-group col-12 m-0 mt-2 row pl-2 pr-2 align-items-center justify-content-center">
+                                    <label class="col-12 text-center">Espaciado</label>
+                                    <div class="input-arrow col-3 p-0 pr-2 m-0">
+                                        <i nz-icon nzType="arrow-up" nzTheme="outline"></i>
+                                        <input (change)="saveInputsStyles(i.id, i.prop, paddingTop+'px '+paddingRight+'px '+paddingBottom+'px '+paddingLeft+'px')"  type="number" [(ngModel)]="paddingTop" class="form-control cursor pl-4" >  
+                                    </div>
+                                    <div class="input-arrow col-3 p-0 pr-2 m-0">
+                                        <i nz-icon nzType="arrow-down" nzTheme="outline"></i>
+                                        <input (change)="saveInputsStyles(i.id, i.prop, paddingTop+'px '+paddingRight+'px '+paddingBottom+'px '+paddingLeft+'px')"  type="number" [(ngModel)]="paddingBottom" class="form-control cursor pl-4" >  
+                                    </div>
+                                    <div class="input-arrow col-3 p-0 pr-2 m-0">
+                                        <i nz-icon nzType="arrow-left" nzTheme="outline"></i>
+                                        <input (change)="saveInputsStyles(i.id, i.prop, paddingTop+'px '+paddingRight+'px '+paddingBottom+'px '+paddingLeft+'px')"  type="number" [(ngModel)]="paddingLeft" class="form-control cursor pl-4" >  
+                                    </div>
+                                    <div class="input-arrow col-3 p-0 pr-2 m-0">
+                                        <i nz-icon nzType="arrow-right" nzTheme="outline"></i>
+                                        <input (change)="saveInputsStyles(i.id, i.prop, paddingTop+'px '+paddingRight+'px '+paddingBottom+'px '+paddingLeft+'px')"  type="number" [(ngModel)]="paddingRight" class="form-control cursor pl-4">  
+                                    </div>
+                                </div>
+                                
+                                <p *ngSwitchDefault>No registrado</p>    
+                            </ng-container>
+
+                        </ng-container>
+                            
+
+                    </div>
+
+                </div>
     
                 <div class="col-12 mt-2">
                     <p class="text-color2 f-13 font-500">Campos</p>
@@ -58,7 +111,15 @@
                         <i nz-icon nzType="plus" nzTheme="outline" class="f-14 icon-white mr-1"></i> Agregar campo
                     </button>
                 </div>
-    
+                
+                <div class="col-12 mt-4">
+                    <div class="draggable icon-element col-3 col-md-2 row justify-content-center align-items-center m-0 p-3 rounded cursor">
+                        <div class="row m-0 p-0 col-12 justify-content-center align-items-center">
+                            <i nz-icon nzType="border-outer" nzTheme="outline" class="f-19"></i>
+                        </div>
+                        <span class="mt-2">Sección</span>
+                    </div>
+                </div>
     
                 <div class="col-12 table-responsive mt-4">
                     <nz-table style="width: 100%; max-width: 100%; min-width: 600px;" #basicTable [nzData]="arrayElements" [nzSize]="'small'" [nzPageSize]="20" [nzPageSizeOptions]="[10, 20, 30, 40]">
@@ -82,6 +143,9 @@
                                     <div class="ml-2 cursor">
                                         <i (click)="editInput(data, i)" nz-icon nzType="edit" nzTheme="outline"></i>
                                     </div>
+                                    <div class="ml-2 cursor">
+                                        <i (click)="editStyles(data)" nz-icon nzType="bg-colors" nzTheme="outline"></i>                                        
+                                    </div>
                                 </td>
                             </tr>
                         </tbody>
@@ -93,36 +157,28 @@
 
         </div>
 
+        <!-- PREVIEW -->
         <div class="col-12 col-lg-5">
             <div class="col-12 row justify-content-center">
-                <div id="preview">
+                <div appRightclick id="preview">
     
-                    <div class="content-preview container-fluid" style="background-image: url({{backgroundImageUrl.value}});">
+                    <div class="content-preview container-fluid" style="background-image: url({{backgroundImage}});">
                         <div class="opacity" style="background-color: rgba(0, 0, 0, {{opacity.value}});"></div>    
-                        <div class="row html">
+                        <div class="row html droppable">   
                             
-                            <div class="col-12 mt-4 row justify-content-center p-0 m-0">
-                                <h5>{{name.value}}</h5>
-                            </div>
-    
-                            <div class="col-12 mt-4 row justify-content-center p-0 m-0">
-                                <img width="200px" src="{{logoUrl.value}}" alt=''>
-                            </div>
-
-                            <ng-container *ngFor="let item of arrayElements">       
-                                
-                                <ng-container [ngSwitch]="item.type">
-                                    <div *ngSwitchCase="'link'" class="col-12 mt-4 row justify-content-center p-0 m-0">
-                                        <a href="{{item.href}}">{{item.name}}</a>
-                                    </div>
-                                                                  
-                                </ng-container>
-                                
-                                
-
-
-                            </ng-container>
-                            
+                                <div *ngFor="let s of sections" id="{{s.id}}" class="section col-12 row justify-content-center p-0 m-0">
+                                    
+                                    <ng-container *ngFor="let e of s.elements">
+                                    
+                                        <ng-container [ngSwitch]="e.type">
+                                            <div *ngSwitchCase="'link'" class="col-12 row justify-content-center p-0 m-0">
+                                                <a href="{{e.href}}" [ngStyle]="(e.styles) ? getStyles(e.styles): ''">{{e.name}}</a>
+                                            </div>
+                                    
+                                        </ng-container>
+                                    
+                                    </ng-container>
+                                </div>
     
                         </div>
                     </div>
@@ -209,3 +265,6 @@
         </div>
     </ng-template>
 </nz-modal>
+
+
+
