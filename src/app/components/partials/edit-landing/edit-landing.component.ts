@@ -8,6 +8,8 @@ import { GeneralService } from 'src/app/services/general.service';
 import * as $ from 'jquery-ui';
 import { element } from 'protractor';
 
+import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+
 declare let $: any;
 
 @Component({
@@ -35,7 +37,6 @@ export class EditLandingComponent implements OnInit {
   disabledSave: Boolean = true
   dataInputsComponent: any = null
   disabledCreateLanding: Boolean = true
-  arrayElements: any = []
   dataInput: any;
   titleModal: String = 'Agregar elemento'
   idInputEdit: any = null
@@ -71,6 +72,36 @@ export class EditLandingComponent implements OnInit {
   //SECCTIONS
 
   sections:any = [];
+
+  //GENERAL STYLES
+
+  generalStyles:any = {
+    backgroundColor: '',
+    opacity: '',
+    backgroundImage: ''
+  } 
+
+
+  //DRAG AND DROP
+
+  idEventDrag: any; 
+
+  //MENU
+
+  menuElement: any = {}
+  menuElementIsVisible:Boolean = false
+  
+
+  //COOKIE
+
+  cookieDataLanding: any = null; 
+
+  //HREF
+
+  typeHref = new FormControl('whatsapp')
+  typeLink: Boolean = false;
+  hrefValue1: any = '';
+  hrefValue2: any = '';
   
 
   constructor(public route: ActivatedRoute, private router: Router, private api: ApiService, private cookie: CookieService, private modalService: NzModalService, private general: GeneralService) {
@@ -83,161 +114,68 @@ export class EditLandingComponent implements OnInit {
       this.titlePage = 'Editar landing'
     }   
     this.getCookieDataLanding();
-    this.eventsJquery()
 
   }
 
-  eventsJquery(){
-    var self = this
-    //Todos los elementos arrastrables
-    $(".draggable").draggable({ revert: true, helper: "clone" })
-
-    //Dropable seccion
-    $(".droppable").droppable({
-      activeClass: "activeClass",
-      hoverClass: "hoverClass",
-      drop: function (event, ui) {
-        event.preventDefault()
-        self.addElement(ui.draggable[0].innerText)
-      }
-
-    })
-
+  getGeneralStyles(){
+    this.api.c('OPACITY', { "background-color": "rgba(0, 0, 0, " + this.opacity.value + ")" })
+    this.generalStyles.opacity = { "background-color": "rgba(0, 0, 0, " + this.opacity.value + ")" }
+    this.generalStyles.backgroundColor = { "background-color": this.backgroundColor.value }
   }
-
-  addElement(e){
-    this.api.c('addElement', e)
-
-    switch (e) {
-      case 'Sección':
-
-        if(this.sections.length === 0){
-          this.sections.push({
-            id: 'section_' + this.general.getRandomArbitrary(1000,9999),
-            elements: [],
-            styles: []
-          })
-        }
-
-
-        this.api.c('addElement sección', this.sections)
-
-        
-        break;
-    
-      default:
-        break;
-    }
-
-
-  }
-
 
   getCookieDataLanding(){
-    let cookieDataLanding = this.cookie.get('data-landing')
-    if (cookieDataLanding && cookieDataLanding != '') {
-      this.backgroundColor.setValue(JSON.parse(this.cookie.get('data-landing')).backgroundColor)
-      this.name.setValue(JSON.parse(this.cookie.get('data-landing')).name)
-      this.opacity.setValue(JSON.parse(this.cookie.get('data-landing')).opacity)
-      this.backgroundImage = JSON.parse(this.cookie.get('data-landing')).backgroundImage
-      this.arrayElements = (JSON.parse(this.cookie.get('data-landing')).arrayElements) ? JSON.parse(this.cookie.get('data-landing')).arrayElements : []
+    
+    this.cookieDataLanding = this.cookie.get('data-landing')
+    if (this.cookieDataLanding && this.cookieDataLanding != '') {
+      this.cookieDataLanding = JSON.parse(this.cookieDataLanding)
+      this.backgroundColor.setValue(this.cookieDataLanding.backgroundColor)
+      this.name.setValue(this.cookieDataLanding.name)
+      this.opacity.setValue(this.cookieDataLanding.opacity)
+      this.backgroundImage = this.cookieDataLanding.backgroundImage
+      this.sections = (this.cookieDataLanding.sections) ? this.cookieDataLanding.sections : []
     }
-    this.api.c('arrayElements', this.arrayElements)
+    this.getGeneralStyles()
+    this.api.c('cookieDataLanding', this.cookieDataLanding)
   }
 
   //INPUTS 
 
   saveCookieInputsElements(){
+    this.api.c('saveCookieInputsElements', 'saved!')
     var dataLanding = {
       backgroundColor: this.backgroundColor.value,
       name: this.name.value,
       opacity: this.opacity.value,
       backgroundImage: this.backgroundImage,
-      arrayElements: this.arrayElements,
+      sections: this.sections,
     }
+    this.getGeneralStyles()
     this.cookie.set('data-landing', JSON.stringify(dataLanding))
   }
 
-  saveInput(){   
-
-    if (this.idInputEdit !== null){ //EDIT ELEMENT BY INDEX
-      this.arrayElements[this.idInputEdit] = this.eventElements(this.element, this.dataInputsComponent) 
-      this.handleCancel();     
-    }else{  //ADD NEW ELEMENT
-      this.arrayElements.push(this.eventElements(this.element, this.dataInputsComponent)) 
-    }
-    
-    this.saveCookieInputsElements()
-
-    this.updateArray();
-    this.isVisible = false   
-    
-  }
-
-  updateArray(){
-    let array = this.arrayElements;
-    this.arrayElements = [];
-    array.forEach(e => {
-      this.arrayElements.push(e)
-    });
-  }
-
-  addInput(){
-    this.titleModal = 'Editar Modal'
-    this.resetInputModal()
-    this.showModal()
-  }
-
-  resetInputModal(){
-    this.element = null
-    this.typeElement = null
-    this.idInputEdit = null
-    this.dataInput = null
-    this.dataInputsComponent = null
-  }
-  
-  
-  editInput(e, index){
-    this.api.c('editInput', e)
-    this.api.c('editInput Index', index)
-    this.typeElement = e.type
-    this.element = e.type
-    this.dataInput = e.originElements
-    this.titleModal = 'Editar Modal'
-    this.idInputEdit = index
-    this.showModal()
-  }
-  
-  deleteInput(idInput){
-
-    let array = this.arrayElements;    
-    array == array.splice(idInput, 1);
-    this.arrayElements = [];
-    array.forEach(e => {
-      this.arrayElements.push(e)
-    });
-
-    this.saveCookieInputsElements()
-    
-  }
-
-  editStyles(data){
+  editStyles(data, sectionId = null){
     let styles = (data.styles) ? data.styles : [] 
-    this.getInputsStyles(data.tag, data.id, styles)
+    this.getInputsStyles(data.tag, data.id, styles, sectionId)
     this.showModalStyles()
   }
 
-  getInputsStyles(tag, id, styles){
+  getInputsStyles(tag, id, styles, sectionId){    
+
     this.inputsStyles = []
     switch (tag) {
       case 'a':    
-        var arrayStyles = ['background-color', 'color', 'padding']    
-      break   
+        var arrayStyles = ['background-color', 'color', 'border-radius', 'padding', 'margin',  'href']    
+      break 
+      case 'section':
+        var arrayStyles = ['background-color', 'padding', 'margin','min-height', 'min-width']
+        break  
     } 
 
     arrayStyles.forEach(e => {
       var elementStyles = this.general.searchElementByNameKey(styles, 'prop', e)
       var value = (elementStyles) ? elementStyles.value : ''
+
+      this.api.c('getInputsStyles values', value)
 
       if(e == 'padding'){
         if(value && value != ''){
@@ -273,7 +211,37 @@ export class EditLandingComponent implements OnInit {
         }
       }
 
+      if (e == 'href'){
+
+        if(value.indexOf('mailto')>-1){
+          this.typeHref.setValue('email')
+          this.hrefValue1 = value.replace('mailto:', '')          
+        }else if(value.indexOf('tel')>-1){
+          this.typeHref.setValue('phone')
+          this.hrefValue1 = value.replace('tel:', '')
+        }else if(value.indexOf('api.whatsapp')){
+          this.typeHref.setValue('whatsapp')
+
+          this.api.c('getInputsStyles href', value)
+
+          let elements = this.general.getParametersURL(value)
+          this.hrefValue1 = elements[0].value
+          this.hrefValue2 = elements[1].value
+        }else{
+          this.typeHref.setValue('redirect')
+          this.hrefValue1 = value
+        }
+
+
+
+        let indexSection = this.general.searchIndexByNameKey(this.sections, 'id', sectionId)
+        let indexElement = this.general.searchIndexByNameKey(this.sections[indexSection].elements, 'id', id)
+        value = this.sections[indexSection].elements[indexElement].href
+      }
+
+
       this.inputsStyles.push({
+        sectionId: sectionId,
         id: id,
         prop: e,
         value: value
@@ -281,29 +249,54 @@ export class EditLandingComponent implements OnInit {
     });   
   }
 
-  saveInputsStyles(id, prop, value){
+  saveInputsStyles(elem, value){
 
-    this.api.c('saveInputsStyles', value)
-    for (let i = 0; i < this.arrayElements.length; i++) {
-      if (this.arrayElements[i].id === id){
-        if (!this.arrayElements[i].styles){
-          this.arrayElements[i].styles = []
-        }
+    if(elem.sectionId === null){  //ESTA EDITANDO LA SECCIöN
+      let indexSection = this.general.searchIndexByNameKey(this.sections, 'id', elem.id)
+      this.api.c('saveInputsStyles', this.sections[indexSection])
+      let indexProp = this.general.searchIndexByNameKey(this.sections[indexSection].styles, 'prop', elem.prop);
+  
+      if (indexProp){
+        this.sections[indexSection].styles[indexProp].value = value; 
+      }else{
+        this.sections[indexSection].styles.push({
+          prop: elem.prop,
+          value: value
+        })
+      }
+  
+      this.api.c('saveInputsStyles', this.sections)      
+    }else{   // ESTA EDITANDO UN ELEMENTO DE LA SECCIÓN  
+      this.api.c('saveInputsStyles elements', elem)
+      let indexSection = this.general.searchIndexByNameKey(this.sections, 'id', elem.sectionId)
+      let indexElement = this.general.searchIndexByNameKey(this.sections[indexSection].elements, 'id', elem.id)
+      let indexProp = this.general.searchIndexByNameKey(this.sections[indexSection].elements[indexElement].styles, 'prop', elem.prop)
 
-        let indexProp = this.general.searchIndexByNameKey(this.arrayElements[i].styles, 'prop', prop) // BUSCA SI YA EXISTE LA PROPIEDAD
-        if (indexProp !== false){
-          this.arrayElements[i].styles[indexProp] = {
-            prop: prop,
-            value: value
-          }
-        }else{
-          this.arrayElements[i].styles.push({
-            prop: prop,
-            value: value
-          })           
-        }
-        break
-      }      
+      if (indexProp) {
+        this.sections[indexSection].elements[indexElement].styles[indexProp].value = value;
+      } else {
+        this.sections[indexSection].elements[indexElement].styles.push({
+          prop: elem.prop,
+          value: value
+        })
+      }
+
+
+    }
+
+    this.saveCookieInputsElements()
+  }
+
+  saveInputsPropieties(type, elem, value){
+    this.api.c('saveInputsPropieties href', value)
+    let indexSection = this.general.searchIndexByNameKey(this.sections, 'id', elem.sectionId)
+    let indexElement = this.general.searchIndexByNameKey(this.sections[indexSection].elements, 'id', elem.id)    
+    switch (type) {
+      case 'href':    
+        this.sections[indexSection].elements[indexElement].href = value
+        break;    
+      default:
+        break;
     }
     this.saveCookieInputsElements()
   }
@@ -317,8 +310,6 @@ export class EditLandingComponent implements OnInit {
   }
 
   
-
-  
   //MODAL  
   
   showModal(): void {
@@ -327,7 +318,7 @@ export class EditLandingComponent implements OnInit {
 
   handleCancel(): void {
     this.isVisible = false
-    this.resetInputModal()
+    // this.resetInputModal()
   }
 
   showModalStyles(): void {
@@ -374,15 +365,15 @@ export class EditLandingComponent implements OnInit {
 
     switch (type) {
       case 'delete-element':
-        this.modalService.confirm({
-          nzTitle: 'Seguro que desea eliminar el elemento',
-          nzContent: '',
-          nzOkText: 'Si',
-          nzOkType: 'danger',
-          nzOnOk: () => this.deleteInput(data),
-          nzCancelText: 'No',
-          // nzOnCancel: () => console.log('Cancel')
-        });
+        // this.modalService.confirm({
+        //   nzTitle: 'Seguro que desea eliminar el elemento',
+        //   nzContent: '',
+        //   nzOkText: 'Si',
+        //   nzOkType: 'danger',
+        //   nzOnOk: () => this.deleteInput(data),
+        //   nzCancelText: 'No',
+        //   // nzOnCancel: () => console.log('Cancel')
+        // });
         break;
 
       default:
@@ -410,6 +401,7 @@ export class EditLandingComponent implements OnInit {
   //EMITTER OUTPUT
 
   eventOutputApplink(e){
+    this.api.c('eventOutputApplink', e)
     switch (e.event) {
       case 'link-component':
         this.disabledSave = e.value
@@ -423,80 +415,317 @@ export class EditLandingComponent implements OnInit {
 
   //EVENTS ELEMENTS
 
-  eventElements(e, data){
+  getHref(elem){
 
-    let id = Math.floor(Math.random() * 1000);
+    var href = ''; 
+       
+      switch (this.typeHref.value) {
+        case 'whatsapp':
+          // https://api.whatsapp.com/send?phone=51954248962&text=Hola%20que%20tal
 
-    switch (e) {
-      case 'link':
-        
-        switch (data.typeLink) {
-          case 'whatsapp':
-            // https://api.whatsapp.com/send?phone=51954248962&text=Hola%20que%20tal
-
+          if (this.hrefValue1 != '' && this.hrefValue1 != ''){
             const base_url = "https://api.whatsapp.com/send";
             let vars = {
-              phone: data.inputValue,
-              text: encodeURI(data.inputValue2),
+              phone: this.hrefValue1,
+              text: encodeURI(this.hrefValue1),
             }
-            let url = base_url + this.general.httpBuildQuery(vars)
-            
-            return {
-              id: 'a_' + id,
-              type: e,
-              tag: 'a',
-              href: url,
-              name: data.inputName,
-              originElements: data
-            }
-
-          case 'redirect':
-
-            return {
-              id: 'a_' + id,
-              type: e,
-              tag: 'a',
-              href: data.inputValue,
-              name: data.inputName,
-              originElements: data
-            }
-
-            
-          case 'tel':
-
-            return {
-              id: 'a_' + id,
-              type: e,
-              tag: 'a',
-              href: 'tel:+' + data.inputValue,
-              name: data.inputName,
-              originElements: data
-            }
-
-          case 'email':
-
-            return {
-              id: 'a_' + id,
-              type: e,
-              tag: 'a',
-              href: 'mailto:' + data.inputValue,
-              name: data.inputName,
-              originElements: data
-            }            
-
-          default:
-            break;
-        }
-
+            href = base_url + this.general.httpBuildQuery(vars)    
+          }
+          break;  
+        case 'redirect':
+          href = this.hrefValue1
+          break;   
+        case 'phone':
+          href = 'tel:+' + this.hrefValue1
+          break;          
+        case 'email':
+          href = 'mailto:' + this.hrefValue1
+          break;         
         
+      }
+
+      this.api.c('getHref', href)
+
+      if(href != ''){
+        this.saveInputsPropieties('href', elem, href)
+      }
+
+
+  }
+
+
+
+  // drag and drop
+
+  allowDropSection(ev){
+    if (this.idEventDrag != 'section') {
+      ev.preventDefault();
+      $(ev.target).addClass('activeSection')      
+    } else {
+      ev.stopPropagation();
+    }
+  }
+
+  allowDropSeparator(ev){
+
+    if (this.idEventDrag == 'section'){
+      ev.preventDefault();
+      $(ev.target).addClass('separationSectionDragOver')  
+    }else{
+      ev.stopPropagation();
+    }
+
+  }
+
+  drag(ev) {
+    this.api.c('drag', ev)  
+    this.idEventDrag = ev.target.id; 
+    switch (this.idEventDrag) {
+      case 'section':      
+        $('.separationSection').addClass('separationSectionActive')    
+        break;
+      case 'link':
+        $('.section').addClass('hoverClass')
+        break;
+    
+      default:
+        break;
+    }
+  }  
+
+  dragLeave(ev){
+    this.api.c('dragLeave', ev)  
+    switch (this.idEventDrag) {
+      case 'section':
+        $(ev.target).removeClass('separationSectionDragOver');        
+        break;
+      case 'link':
+        $(ev.target).removeClass('activeSection') 
+        break;
+
+      default:
+        break;
+    }
+  }
+
+  dragend(ev){
+    this.api.c('dragend', ev)  
+    switch (this.idEventDrag) {
+      case 'section':
+        $('.separationSection').removeClass('separationSectionActive')       
+        break;
+      case 'link':
+        $('.section').removeClass('hoverClass')
+        break;
+      
+
+      default:
+        break;
+    }
+    
+  }
+
+  //DROPS 
+
+  drop(ev) {
+    ev.preventDefault();
+    var data = ev.dataTransfer.getData("text");
+    this.api.c('drop', this.idEventDrag)
+    switch (this.idEventDrag) {
+      case 'section':
+        $('.separationSection').removeClass('separationSectionActive')
+        $('.separationSection').removeClass('separationSectionDragOver')   
+        break;
+      case 'link':
+        $('.section').removeClass('hoverClass')
+        $('.section').removeClass('activeSection')
+        
+        break;
+      default:
+        break;
+    }
+
+    this.addElement(this.idEventDrag, ev)
+  }
+  
+
+  //EVENTS DROP
+
+  
+  addElement(e, data:any = false) {
+    this.api.c('addElement', e)
+
+    switch (e) {
+      case 'section':
+
+        if (this.sections.length === 0) {
+          this.sections.push({
+            id: 'section_' + this.general.getRandomArbitrary(1000, 9999),
+            elements: [],
+            tag: 'section',
+            styles: [
+              {
+                prop: 'min-height',
+                value: '70px'
+              },
+              {
+                prop: 'min-width',
+                value: '100%'
+              }
+            ]
+          })
+        }else{
+          if (data){
+            let indexPosPrev = this.general.getIndexToId($(data.target).attr('id'))
+            this.api.c('addElement else', indexPosPrev)
+            let newSection = {
+              id: 'section_' + this.general.getRandomArbitrary(1000, 9999),
+              elements: [],
+              tag: 'section',
+              styles: [
+                {
+                  prop: 'min-height',
+                  value: '70px'
+                },
+                {
+                  prop: 'min-width',
+                  value: '100%'
+                }
+              ]
+            }
+
+            this.sections = this.general.insertObjectInPositionArray(newSection, this.sections, indexPosPrev)
+          }
+        }
+        this.api.c('addElement sección', this.sections)
+
+        break;
+
+      case 'link':
+
+        let indexSection = this.general.searchIndexByNameKey(this.sections, 'id', data.target.id)
+        let random = this.general.getRandomArbitrary(1000, 9999)
+        this.sections[indexSection].elements.push({
+          id: 'link_' + random,          
+          name: 'Enlace_' + random,
+          href: '#',
+          tag: 'a',
+          styles: []
+        })
+
+        this.api.c('addElement link', this.sections)
+      break
+
+      default:
+        break;
+    }
+
+    this.saveCookieInputsElements()
+
+
+  }
+
+
+  //MENUELEMENT
+
+  menuElementEvent(e){
+    this.api.c('menuElementEvent',e)
+
+    let type = e.target.getAttribute('data-type'); 
+    
+    switch (type) {
+      case 'section':
+        this.menuElement = {
+          options: ['Editar', 'Eliminar'],
+          id: e.target.id,
+          styles: [
+            {prop: 'top', value: e.pageY + 'px'},
+            {prop: 'left', value: e.pageX + 'px'}          
+          ],
+          type: type,
+        }
+        this.api.c('menuElement', this.menuElement )
+        this.openMenuElement()
+        break;
+      case 'link':
+        this.menuElement = {
+          options: ['Editar', 'Eliminar'],
+          id: e.target.id,
+          parentId: e.target.parentElement.id,
+          styles: [
+            { prop: 'top', value: e.pageY + 'px' },
+            { prop: 'left', value: e.pageX + 'px' }
+          ],
+          type: type,
+        }
+        this.api.c('menuElement', this.menuElement)
+        this.openMenuElement()
+        break;
+    
+      default:
+        this.closeMenuElement();
+        break;
+    }
+
+  }
+
+  openMenuElement(){    
+
+    this.api.c('openMenuElement', 'openMenuElement')
+
+    this.menuElementIsVisible = true
+  }
+
+  closeMenuElement(){
+    this.menuElementIsVisible = false
+  }
+
+  editElement(elem){
+    this.api.c('editElement', elem)
+
+    switch (elem.type) {
+      case 'section':
+        let element = this.general.searchElementByNameKey(this.sections, 'id', elem.id)
+        this.api.c('editElement section', element)
+        this.editStyles(element)
+        break;
+      case 'link':
+        let section = this.general.searchElementByNameKey(this.sections, 'id', elem.parentId)
+        let link = this.general.searchElementByNameKey(section.elements, 'id', elem.id)
+        this.api.c('editElement link', link)
+        this.editStyles(link, elem.parentId)
         break;
     
       default:
         break;
     }
 
+    this.closeMenuElement()
+    
   }
 
+  deleteElement(elem) {
+    this.api.c('deleteElement', elem)
+    switch (elem.type) {
+      case 'section':
+        this.sections = this.general.deleteElementOfArray(elem.id, this.sections)
+        this.handleCancelStyles()
+        this.api.c('deleteElementSection', this.sections)
+        break;
+      case 'link':
+        this.sections = this.general.deleteElementOfArrayintoArray(elem.parentId, elem.id ,this.sections)
+        this.handleCancelStyles()
+        this.api.c('deleteElementSection', this.sections)
+        break;
+
+      default:
+        break;
+    }
+
+    this.closeMenuElement()
+    this.saveCookieInputsElements()
+
+  }
 
 
 

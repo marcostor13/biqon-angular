@@ -29,6 +29,7 @@ import { EditLandingComponent } from './components/partials/edit-landing/edit-la
 import { LinkComponent } from './components/partials/inputs/link/link.component';
 import { FormComponent } from './components/partials/inputs/form/form.component';
 import { RightclickDirective } from './directives/rightclick.directive';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 registerLocaleData(es);
 
@@ -62,6 +63,7 @@ registerLocaleData(es);
     NzPageHeaderModule,
     NzIconModule,
     NzInputModule,
+    DragDropModule,
   ],
   providers: [
     CookieService,

@@ -1,4 +1,4 @@
-import { Directive, ElementRef, HostListener, Input } from '@angular/core';
+import { Directive, ElementRef, HostListener, Input, Output, EventEmitter} from '@angular/core';
 import { ApiService } from './../services/api.service';
 
 @Directive({
@@ -6,12 +6,14 @@ import { ApiService } from './../services/api.service';
 })
 export class RightclickDirective {
 
+  @Output() emitterRigthClick = new EventEmitter();
+
   constructor(private el:ElementRef, private api: ApiService) { }
 
   @HostListener('contextmenu', ['$event']) onRightClick(event) {
     event.preventDefault();
 
-    this.api.c('Click Derecho', event.target)
+    this.emitterRigthClick.emit(event);
 
   }
 

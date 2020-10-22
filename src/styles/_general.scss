@@ -534,3 +534,13 @@ header, #changing{
     }
     
 }
+
+//MENU ELEMENTS
+
+.menuElement{
+    li:hover{
+        background-color: $color2 !important;
+        cursor: pointer;
+        color:white;
+    }
+}

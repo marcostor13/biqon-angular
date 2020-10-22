@@ -118,12 +118,21 @@ textarea{
             top:0;
             left: 0;
             min-width: 100%;
-            min-height: 530px;            
+            min-height: 530px;     
+            z-index: 1;        
         }
 
         .html{
+            position: absolute;
+            top:0;
+            left: 0;
+            min-width: 100%;
             z-index: 2;
             min-height: 530px;
+            max-height: 530px;
+            max-width: 100% !important;
+            overflow-x: auto;
+            overflow-y: auto;            
         }
     }
     
@@ -152,13 +161,38 @@ textarea{
 }
 
 .hoverClass{
-    background-color: rgb(212, 212, 212);
+    background-color: rgb(212, 212, 212) !important;
+}
+
+.activeSection{
+    background-color: rgb(122, 221, 147) !important;
 }
 
 
 //CSS PROVICIONAL
 
 .section{
-    border: 1px dashed #2d7cc1;
-    min-height: 10px;
+    border: 1px dashed #24ff1c;
+    z-index: 3;
+}
+
+.separationSectionActive{
+    min-height: 20px;
+}
+
+.separationSectionDragOver{
+    background-color: rgba($color: #1cd176, $alpha: 1.0) !important;
+}
+
+.separationSection{
+    background-color: rgba($color: #70deff, $alpha: 1.0);
+    min-width: 100%;
+}
+
+
+//MENU ELEMENT
+
+.menuElement{
+    position: absolute;   
+    z-index: 4; 
 }

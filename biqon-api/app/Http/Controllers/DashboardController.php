@@ -63,13 +63,27 @@ class DashboardController extends Controller
                     ->whereNotBetween('RUT', [intval($from), intval($to)])
                     ->get();
         }else if($rutList != ''){
-            return DB::connection($database)->table('contactos')
-                    ->where('TELEFONO', 'LIKE' ,"%$phone%")
-                    ->where('NOMBRE', 'LIKE',  "%$name%")
-                    ->where('COMUNA', 'LIKE',  "%$comuna%")
-                    ->where('REGION', 'LIKE',  "%$region%")
-                    ->whereIn('RUT', $rutList)
-                    ->get();
+
+            if(preg_match('([0-9]|[0-9])', $rutList[0])){
+                return DB::connection($database)->table('contactos')
+                        ->where('TELEFONO', 'LIKE' ,"%$phone%")
+                        ->where('NOMBRE', 'LIKE',  "%$name%")
+                        ->where('COMUNA', 'LIKE',  "%$comuna%")
+                        ->where('REGION', 'LIKE',  "%$region%")
+                        ->whereIn('RUT', $rutList)
+                        ->get();
+
+            }else{
+
+                return DB::connection($database)->table('contactos')
+                        ->where('TELEFONO', 'LIKE' ,"%$phone%")
+                        ->where('NOMBRE', 'LIKE',  "%$name%")
+                        ->where('COMUNA', 'LIKE',  "%$comuna%")
+                        ->where('REGION', 'LIKE',  "%$region%")
+                        ->whereIn('NOMBRE', $rutList)
+                        ->get();
+            }
+
         }else{
             return DB::connection($database)->table('contactos')
                     ->where('TELEFONO', 'LIKE' ,"%$phone%")

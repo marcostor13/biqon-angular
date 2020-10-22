@@ -1,5 +1,6 @@
 import { Component, OnInit, EventEmitter, Output, Input } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { ApiService } from './../../../../services/api.service';
 
 @Component({
   selector: 'app-link',
@@ -20,7 +21,7 @@ export class LinkComponent implements OnInit {
   @Output() dataOutput = new EventEmitter<any>();
   @Input() data: any; 
 
-  constructor() {
+  constructor(private api: ApiService) {
     
    }
 
@@ -44,6 +45,8 @@ export class LinkComponent implements OnInit {
 
 
   validate(){
+
+    this.api.c('validate link', '1')
 
     if (this.inputName !== null && this.inputValue !== null){
       this.dataOutput.emit({

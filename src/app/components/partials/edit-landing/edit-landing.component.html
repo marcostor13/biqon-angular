@@ -20,25 +20,14 @@
             <div class="row flex-wrap p-2 pt-5 p-md-5 col-12 shadow p-0 m-0">
                 <div class="form-group  col-12 col-md-6">
                     <label>Nombre</label>
-                    <input type="text" class="form-control" [formControl]="name" placeholder="Ingrese un nombre" >
+                    <input (change)="saveCookieInputsElements()" type="text" class="form-control" [formControl]="name" placeholder="Ingrese un nombre" >
                 </div>
        
-                <!-- <div class="form-group col-12 col-md-6">
-                    <label>Logo</label>
-                    <input type="text" class="form-control" [formControl]="logoUrl" placeholder="Ingrese una url">
-                    <h5 class="mt-2 text-center">ó</h5>
-                    <div class="formFile bg-color2 p-0">
-                        <input #imageInput  accept="image/png" (change)="handleFileInput($event.target.files, 'logo')"  type="file" [formControl]="logoUpload">
-                        <div>
-                            <label class="text-white">{{nameInputFileLogo}}</label>
-                        </div>
-                    </div> 
-                </div> -->
-    
+   
                 <div class="form-group col-12 col-md-6">
                     <label>Imagen de fondo</label>
                     <div class="formFile bg-color2 p-0">
-                        <input #imageInput  accept="image/*" (change)="handleFileInput($event.target.files, 'background')"  type="file" [formControl]="backgroundImageUpload">
+                        <input #imageInput  accept="image/*" (change)="handleFileInput($event.target.files, 'background'); saveCookieInputsElements()"  type="file" [formControl]="backgroundImageUpload">
                         <div>
                             <label class="text-white">{{nameInputFileBackground}}</label>
                         </div>
@@ -47,12 +36,12 @@
                 
                 <div class="form-group  col-12 col-md-6">
                     <label>Opacidad del fondo</label>
-                    <input type="range" min="0" max="1" step="0.1" class="form-control" [formControl]="opacity">
+                    <input (change)="saveCookieInputsElements()" type="range" min="0" max="1" step="0.1" class="form-control" [formControl]="opacity">
                 </div>
 
                 <div class="form-group  col-12 col-md-6">
                     <label>Color del fondo</label>
-                    <input type="color" class="form-control" [formControl]="backgroundColor" value="">
+                    <input (change)="saveCookieInputsElements()" type="color" class="form-control" [formControl]="backgroundColor">
                 </div>
 
                 <div  *ngIf="isVisibleStyles" class="col-12 mt-2">
@@ -68,30 +57,94 @@
                             <ng-container [ngSwitch]="i.prop">
                                 <div *ngSwitchCase="'background-color'" class="form-group col-3 m-0 mt-2 row pl-2 pr-2 align-items-center justify-content-center">
                                     <label>Color de fondo</label>
-                                    <input (change)="saveInputsStyles(i.id, i.prop, $event.target.value)"  type="color" class="form-control cursor" value="{{i.value}}">                
+                                    <input (change)="saveInputsStyles(i, $event.target.value)"  type="color" class="form-control cursor" value="{{i.value}}">                
                                 </div>
                                 <div *ngSwitchCase="'color'" class="form-group col-3 m-0 mt-2 row pl-2 pr-2 align-items-center justify-content-center">
                                     <label>Color del texto</label>
-                                    <input (change)="saveInputsStyles(i.id, i.prop, $event.target.value)"  type="color" class="form-control cursor" value="{{i.value}}">                
+                                    <input (change)="saveInputsStyles(i, $event.target.value)"  type="color" class="form-control cursor" value="{{i.value}}">                
                                 </div>
 
                                 <div *ngSwitchCase="'padding'" class="form-group col-12 m-0 mt-2 row pl-2 pr-2 align-items-center justify-content-center">
                                     <label class="col-12 text-center">Espaciado</label>
                                     <div class="input-arrow col-3 p-0 pr-2 m-0">
                                         <i nz-icon nzType="arrow-up" nzTheme="outline"></i>
-                                        <input (change)="saveInputsStyles(i.id, i.prop, paddingTop+'px '+paddingRight+'px '+paddingBottom+'px '+paddingLeft+'px')"  type="number" [(ngModel)]="paddingTop" class="form-control cursor pl-4" >  
+                                        <input (change)="saveInputsStyles(i, paddingTop+'px '+paddingRight+'px '+paddingBottom+'px '+paddingLeft+'px')"  type="number" [(ngModel)]="paddingTop" class="form-control cursor pl-4" >  
                                     </div>
                                     <div class="input-arrow col-3 p-0 pr-2 m-0">
                                         <i nz-icon nzType="arrow-down" nzTheme="outline"></i>
-                                        <input (change)="saveInputsStyles(i.id, i.prop, paddingTop+'px '+paddingRight+'px '+paddingBottom+'px '+paddingLeft+'px')"  type="number" [(ngModel)]="paddingBottom" class="form-control cursor pl-4" >  
+                                        <input (change)="saveInputsStyles(i, paddingTop+'px '+paddingRight+'px '+paddingBottom+'px '+paddingLeft+'px')"  type="number" [(ngModel)]="paddingBottom" class="form-control cursor pl-4" >  
                                     </div>
                                     <div class="input-arrow col-3 p-0 pr-2 m-0">
                                         <i nz-icon nzType="arrow-left" nzTheme="outline"></i>
-                                        <input (change)="saveInputsStyles(i.id, i.prop, paddingTop+'px '+paddingRight+'px '+paddingBottom+'px '+paddingLeft+'px')"  type="number" [(ngModel)]="paddingLeft" class="form-control cursor pl-4" >  
+                                        <input (change)="saveInputsStyles(i, paddingTop+'px '+paddingRight+'px '+paddingBottom+'px '+paddingLeft+'px')"  type="number" [(ngModel)]="paddingLeft" class="form-control cursor pl-4" >  
                                     </div>
                                     <div class="input-arrow col-3 p-0 pr-2 m-0">
                                         <i nz-icon nzType="arrow-right" nzTheme="outline"></i>
-                                        <input (change)="saveInputsStyles(i.id, i.prop, paddingTop+'px '+paddingRight+'px '+paddingBottom+'px '+paddingLeft+'px')"  type="number" [(ngModel)]="paddingRight" class="form-control cursor pl-4">  
+                                        <input (change)="saveInputsStyles(i, paddingTop+'px '+paddingRight+'px '+paddingBottom+'px '+paddingLeft+'px')"  type="number" [(ngModel)]="paddingRight" class="form-control cursor pl-4">  
+                                    </div>
+                                </div>
+
+                                <div *ngSwitchCase="'margin'"
+                                    class="form-group col-12 m-0 mt-2 row pl-2 pr-2 align-items-center justify-content-center">
+                                    <label class="col-12 text-center">Margen</label>
+                                    <div class="input-arrow col-3 p-0 pr-2 m-0">
+                                        <i nz-icon nzType="arrow-up" nzTheme="outline"></i>
+                                        <input (change)="saveInputsStyles(i, marginTop+'px '+marginRight+'px '+marginBottom+'px '+marginLeft+'px')"
+                                            type="number" [(ngModel)]="marginTop" class="form-control cursor pl-4">
+                                    </div>
+                                    <div class="input-arrow col-3 p-0 pr-2 m-0">
+                                        <i nz-icon nzType="arrow-down" nzTheme="outline"></i>
+                                        <input (change)="saveInputsStyles(i, marginTop+'px '+marginRight+'px '+marginBottom+'px '+marginLeft+'px')"
+                                            type="number" [(ngModel)]="marginBottom" class="form-control cursor pl-4">
+                                    </div>
+                                    <div class="input-arrow col-3 p-0 pr-2 m-0">
+                                        <i nz-icon nzType="arrow-left" nzTheme="outline"></i>
+                                        <input (change)="saveInputsStyles(i, marginTop+'px '+marginRight+'px '+marginBottom+'px '+marginLeft+'px')"
+                                            type="number" [(ngModel)]="marginLeft" class="form-control cursor pl-4">
+                                    </div>
+                                    <div class="input-arrow col-3 p-0 pr-2 m-0">
+                                        <i nz-icon nzType="arrow-right" nzTheme="outline"></i>
+                                        <input (change)="saveInputsStyles(i, marginTop+'px '+marginRight+'px '+marginBottom+'px '+marginLeft+'px')"
+                                            type="number" [(ngModel)]="marginRight" class="form-control cursor pl-4">
+                                    </div>
+                                </div>
+
+                                <div *ngSwitchCase="'min-height'" class="form-group col-3 m-0 mt-2 row pl-2 pr-2 align-items-center justify-content-center">
+                                    <label>Alto mínimo</label>
+                                    <input (change)="saveInputsStyles(i, $event.target.value + 'px')"  type="number" class="form-control cursor" value="{{i.value.replace('px', '')}}">                
+                                </div>
+
+                                <div *ngSwitchCase="'min-width'" class="form-group col-3 m-0 mt-2 row pl-2 pr-2 align-items-center justify-content-center">
+                                    <label>Ancho</label>
+                                    <input (change)="saveInputsStyles(i, $event.target.value + '%')"  type="number" class="form-control cursor" value="{{i.value.replace('%', '')}}">                
+                                </div>
+
+                                <div *ngSwitchCase="'border-radius'" class="form-group col-3 m-0 mt-2 row pl-2 pr-2 align-items-center justify-content-center">
+                                    <label>Esquinas</label>
+                                    <input (change)="saveInputsStyles(i, $event.target.value + 'px')"  type="number" class="form-control cursor" value="{{i.value.replace('px', '')}}">                
+                                </div>
+
+                                <div *ngSwitchCase="'href'" class="form-group col-12 m-0 mt-2 row pl-2 pr-2 align-items-center justify-content-center">
+                                    <label class="col-12 m-0 p-0">Tipo</label>
+                                    <div class="row m-0 p-0 col-12">
+                                        <select class="form-control cursor" [formControl]="typeHref">
+                                            <option value="whatsapp">Whatsapp</option>
+                                            <option value="email">Correo</option>
+                                            <option value="phone">Teléfono</option>
+                                            <option value="redirect">Redirección</option>
+                                        </select>
+
+                                        <ng-container [ngSwitch]="typeHref.value">
+                                            <label class="mt-2" *ngSwitchCase="'whatsapp'">Ingrese numero y el mensaje</label>
+                                            <label class="mt-2" *ngSwitchCase="'email'">Ingrese correo</label>
+                                            <label class="mt-2" *ngSwitchCase="'phone'">Ingrese teléfono</label>
+                                            <label class="mt-2" *ngSwitchCase="'redirect'">Ingrese un Enlace</label>
+                                        </ng-container>
+                                        
+                                        <input (change)="getHref(i)"  type="text" class="form-control cursor" [(ngModel)]="hrefValue1">
+                                        <input *ngIf="typeHref.value == 'whatsapp'" (change)="getHref(i)"  type="text" class="form-control cursor mt-3" [(ngModel)]="hrefValue2" placeholder="Ingrese el mensaje">
+                                  
+
                                     </div>
                                 </div>
                                 
@@ -104,54 +157,28 @@
                     </div>
 
                 </div>
+
+                <!-- CAMPOS -->
     
                 <div class="col-12 mt-2">
                     <p class="text-color2 f-13 font-500">Campos</p>
-                    <button (click)="addInput()" class="row bg-color4 text-white p-0 m-0 pl-4 pr-4">
-                        <i nz-icon nzType="plus" nzTheme="outline" class="f-14 icon-white mr-1"></i> Agregar campo
-                    </button>
                 </div>
                 
-                <div class="col-12 mt-4">
-                    <div class="draggable icon-element col-3 col-md-2 row justify-content-center align-items-center m-0 p-3 rounded cursor">
+                <div class="col-12 mt-4 row ">
+                    <div id="section" draggable="true" (dragstart)="drag($event)" (dragend)="dragend($event)" class="icon-element col-3 col-md-2 row justify-content-center align-items-center m-0 p-3 rounded cursor">
                         <div class="row m-0 p-0 col-12 justify-content-center align-items-center">
                             <i nz-icon nzType="border-outer" nzTheme="outline" class="f-19"></i>
                         </div>
                         <span class="mt-2">Sección</span>
                     </div>
-                </div>
-    
-                <div class="col-12 table-responsive mt-4">
-                    <nz-table style="width: 100%; max-width: 100%; min-width: 600px;" #basicTable [nzData]="arrayElements" [nzSize]="'small'" [nzPageSize]="20" [nzPageSizeOptions]="[10, 20, 30, 40]">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>NOMBRE</th>
-                                <th>ETIQUETA</th>                            
-                                <th>OPCIONES</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let data of basicTable.data; index as i">
-                                <td>{{ i+1 }}</td>
-                                <td>{{ data.name }}</td>
-                                <td>{{ data.tag }}</td>
-                                <td class="row">
-                                    <div class="cursor">
-                                        <i (click)="showDeleteConfirm('delete-element', i)" nz-icon nzType="delete" nzTheme="outline"></i>
-                                    </div>
-                                    <div class="ml-2 cursor">
-                                        <i (click)="editInput(data, i)" nz-icon nzType="edit" nzTheme="outline"></i>
-                                    </div>
-                                    <div class="ml-2 cursor">
-                                        <i (click)="editStyles(data)" nz-icon nzType="bg-colors" nzTheme="outline"></i>                                        
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </nz-table>
-                
-                </div>
+                    <div id="link" draggable="true" (dragstart)="drag($event)" (dragend)="dragend($event)" class="icon-element ml-2 col-3 col-md-2 row justify-content-center align-items-center m-0 p-3 rounded cursor">
+                        <div class="row m-0 p-0 col-12 justify-content-center align-items-center">
+                            <i nz-icon nzType="link" nzTheme="outline" class="f-19"></i>
+                        </div>
+                        <span class="mt-2">Enlace</span>
+                    </div>
+                </div>   
+         
 
             </div>
 
@@ -160,25 +187,35 @@
         <!-- PREVIEW -->
         <div class="col-12 col-lg-5">
             <div class="col-12 row justify-content-center">
-                <div appRightclick id="preview">
+                <div  id="preview">
     
                     <div class="content-preview container-fluid" style="background-image: url({{backgroundImage}});">
-                        <div class="opacity" style="background-color: rgba(0, 0, 0, {{opacity.value}});"></div>    
-                        <div class="row html droppable">   
-                            
-                                <div *ngFor="let s of sections" id="{{s.id}}" class="section col-12 row justify-content-center p-0 m-0">
-                                    
-                                    <ng-container *ngFor="let e of s.elements">
-                                    
-                                        <ng-container [ngSwitch]="e.type">
-                                            <div *ngSwitchCase="'link'" class="col-12 row justify-content-center p-0 m-0">
-                                                <a href="{{e.href}}" [ngStyle]="(e.styles) ? getStyles(e.styles): ''">{{e.name}}</a>
-                                            </div>
-                                    
+                        <div class="opacity" [ngStyle]="generalStyles.opacity"></div>    
+
+                        <!-- HTML::::: -->
+
+                        <div appRightclick (emitterRigthClick)="menuElementEvent($event)" (click)="closeMenuElement()" [ngStyle]="generalStyles.backgroundColor"  class="html d-flex flex-column justify-content-start align-items-center">   
+
+                                <div id="separator_0" class="separationSection" (dragover)="allowDropSeparator($event)" (drop)="drop($event)" (dragleave)="dragLeave($event)"></div>
+                                <ng-container *ngFor="let s of sections; index as i">
+
+                                    <div  id="{{s.id}}" data-type="section" class="d-flex justify-content-center align-items-center section row noSection"  [ngStyle]="(s.styles) ? getStyles(s.styles): ''" (drop)="drop($event)" (dragleave)="dragLeave($event)"  (dragover)="allowDropSection($event)">
+                                        
+                                        <ng-container *ngFor="let e of s.elements">
+                                        
+                                            <ng-container [ngSwitch]="e.tag">
+                                                <ng-container *ngSwitchCase="'a'">
+                                                    <a id="{{e.id}}" data-type="link" draggable="false" href="{{e.href}}" [ngStyle]="(e.styles) ? getStyles(e.styles): ''">{{e.name}}</a>
+                                                </ng-container>     
+                                            </ng-container>
+                                        
                                         </ng-container>
-                                    
-                                    </ng-container>
-                                </div>
+
+                                    </div>
+                                    <div id="separator_{{i+1}}" class="separationSection" (dragover)="allowDropSeparator($event)" (drop)="drop($event)" (dragleave)="dragLeave($event)"></div>
+
+                                </ng-container>
+
     
                         </div>
                     </div>
@@ -188,21 +225,12 @@
 
         </div>
 
-
-
-
             <div class="row form-group  col-12 mt-5 justify-content-end  m-0">
 
                 <button class="bg-color4 text-white p-0 m-0 pl-4 pr-4" [disabled]="disabledCreateLanding">Crear Landing</button>
                 <button [routerLink]="['/landings']" class="bg-color5 text-white p-0 m-0 pl-4 pr-4 ml-4" >Cancelar</button>
 
             </div>
-
-
-
-
-        
-
 
     </div>
 
@@ -260,7 +288,7 @@
     </div>
     <ng-template #modalFooter>
         <div class="row justify-content-end">         
-            <button class="btn1 p-1" (click)="saveInput()" [disabled]="disabledSave">Guardar</button>
+            <button class="btn1 p-1" [disabled]="disabledSave">Guardar</button>
             <button class="btn2 p-1" (click)="handleCancel()">Cancelar</button>
         </div>
     </ng-template>
@@ -268,3 +296,13 @@
 
 
 
+
+<div *ngIf="menuElementIsVisible" class="menuElement bg-color4"  [ngStyle]="(menuElement.styles) ? getStyles(menuElement.styles): ''">
+    <p class="p-2 pl-5 pr-5 bg-color2">Menú</p>
+    <ul class="list-unstyled">
+        <ng-container *ngFor="let item of menuElement.options">
+            <li class="pl-3" *ngIf="item == 'Editar'" (click)="editElement(menuElement)">{{item}}</li>
+            <li class="pl-3" *ngIf="item == 'Eliminar'" (click)="deleteElement(menuElement)">{{item}}</li>
+        </ng-container>
+    </ul>
+</div>
