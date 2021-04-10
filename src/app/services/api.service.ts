@@ -12,7 +12,7 @@ export class ApiService {
 
   constructor(private http: HttpClient, private cookie: CookieService, private router: Router) {
     if (window.location.href.indexOf('35.238.14.128') > -1 || window.location.href.indexOf('binteraction' ) > -1) {
-      this.url = 'http://binteractionbackend.tk/api/';
+      this.url = 'https://contactos.binteraction.cl/api/';
     } else {
       this.url = 'http://localhost:8000/api/';
     }
